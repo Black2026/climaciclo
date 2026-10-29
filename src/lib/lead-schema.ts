@@ -47,15 +47,15 @@ const text = (min: number, max: number, label: string) =>
   z.string().trim().min(min, `${label} é obrigatório`).max(max, `${label}: máximo ${max} caracteres`);
 
 export const step1Schema = z.object({
-  environment_type: z.enum(vals(ENVIRONMENTS), { errorMap: () => ({ message: "Escolha o ambiente" }) }),
-  unit_count: z.coerce.number({ invalid_type_error: "Informe a quantidade" }).int("Use um número inteiro").min(1, "Mínimo 1 aparelho").max(50, "Máximo 50 aparelhos"),
-  unit_type: z.enum(vals(UNIT_TYPES), { errorMap: () => ({ message: "Escolha o tipo" }) }),
+  environment_type: z.enum(vals(ENVIRONMENTS), { error: "Escolha o ambiente" }),
+  unit_count: z.coerce.number({ error: "Informe a quantidade" }).int("Use um número inteiro").min(1, "Mínimo 1 aparelho").max(50, "Máximo 50 aparelhos"),
+  unit_type: z.enum(vals(UNIT_TYPES), { error: "Escolha o tipo" }),
 });
 
 export const step2Schema = z.object({
   city: text(2, 80, "Cidade"),
   neighborhood: text(2, 80, "Bairro"),
-  follow_up_pref: z.enum(vals(FOLLOW_UPS), { errorMap: () => ({ message: "Escolha uma preferência" }) }),
+  follow_up_pref: z.enum(vals(FOLLOW_UPS), { error: "Escolha uma preferência" }),
   interests: z.array(z.enum(vals(INTERESTS))).min(1, "Escolha pelo menos um interesse").max(3),
 });
 
@@ -73,7 +73,7 @@ export const step3Schema = z.object({
     .optional()
     .or(z.literal(""))
     .refine((v) => !v || z.string().email().safeParse(v).success, "E-mail inválido"),
-  consent: z.literal(true, { errorMap: () => ({ message: "É preciso aceitar para enviar" }) }),
+  consent: z.literal(true, { error: "É preciso aceitar para enviar" }),
 });
 
 export const leadSchema = step1Schema
