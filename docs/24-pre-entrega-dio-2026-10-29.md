@@ -98,3 +98,23 @@ Não foram mostrados identificadores GHSA/CVE, intervalo afetado, versões corri
 Como referência cruzada, o advisory `GHSA-qx66-fv34-fjm8` (`CVE-2026-102989`) foi corrigido na versão `@tanstack/react-start@1.168.60`, segundo a equipe TanStack: https://tanstack.com/blog/tanstack-start-security-update-cve-2026-102989 . Isso **não identifica** quais são os cinco alertas exibidos para esse pacote na interface; conferir cada identificador exportado antes de inferir.
 
 **Decisão da pré-entrega:** nenhuma correção indiscriminada de versões e nenhuma publicação com coleta ativa de dados pessoais antes de avaliar os alertas High aplicáveis. Evidências visuais compartilhadas na conversa ainda necessitam de inclusão em `evidencias/`.
+
+
+## Diagnóstico do JSON exportado — 29/10/2026
+
+Arquivo fornecido pelo participante: `dependencies-04fb16f0-8fa2-421e-b179-bada249ef772-2026-10-29.json`. Foram identificadas **53 dependências**, **12 ocorrências** classificadas como 6 High / 6 Moderate, mas apenas **6 identificadores GHSA distintos**. Uma vulnerabilidade transitive pode aparecer em vários pacotes dependentes.
+
+| Biblioteca vulnerável | GHSA | Severidade | Pacotes pelos quais foi reportada |
+|---|---|---|---|
+| `source-map-js` | `GHSA-68fv-2mgg-jv7q` | High | `@tailwindcss/vite` |
+| `js-yaml` | `GHSA-2883-xcg3-v3hh` | High | `@tanstack/react-start` |
+| `js-yaml` | `GHSA-5p4m-2wfm-xmqj` | High | `@tanstack/react-start` |
+| `zod` | `GHSA-mrhx-c7xc-m3w5` | High | `@tanstack/react-start`, `@tanstack/router-plugin`, `zod` |
+| `seroval` | `GHSA-9wx9-5pv9-3349` | Moderate | `@tanstack/react-router`, `@tanstack/react-start`, `@tanstack/router-plugin` |
+| `seroval` | `GHSA-f86p-h4j2-7qgj` | Moderate | `@tanstack/react-router`, `@tanstack/react-start`, `@tanstack/router-plugin` |
+
+No `bun.lock` da branch `main`, os pacotes transitivos foram confirmados nas versões: `source-map-js@1.2.1`, `js-yaml@4.3.0`, `seroval@1.6.8` e `zod@3.25.76`.
+
+**Tratamento:** [GitHub Issue #4](https://github.com/Black2026/climaciclo/issues/4). Priorizar atualização compatível dos pacotes transitivos, com regeneração do `bun.lock`; Zod requer especial cuidado por envolver migração principal da versão 3 para a 4. Não editar o lockfile manualmente; rodar testes e novo scan após qualquer alteração. O JSON não comprova que os casos vulneráveis sejam exploráveis no fluxo do ClimaCiclo nem fornece versão de correção, portanto essa análise é inventário, não homologação da correção.
+
+**Estado:** pendente de remediação e reteste; não publicar com coleta pessoal ativa antes da revisão dos achados aplicáveis. O JSON original está anexado à conversa, não versionado no GitHub.
