@@ -76,3 +76,25 @@ O participante executou o **Deep security scan** no Lovable e compartilhou captu
 **Conclusão parcial:** os dois scans estão atualizados e nenhum problema foi reportado no relatório geral apresentado. Não declarar ausência universal de vulnerabilidades: ainda são **12 alertas conhecidos em dependências** não classificados, além das pendências de funcionamento/admin/privacidade/publicação. Antes da entrega, abrir **Review** nas dependências, registrar pacote, versão, severidade, recomendação de correção e eventual impacto em produção. Não atualizar pacotes de forma indiscriminada.
 
 **Evidência:** captura enviada em conversa; o PNG ainda precisa ser incluído em `evidencias/` para o portfólio. O projeto continua em preparação; **não publicado nem pronto para coletar dados pessoais reais**.
+
+
+## Inventário de alertas de dependências — 29/10/2026
+
+O participante abriu **Project dependencies → Review** e apresentou capturas de três segmentos da lista de dependências do Lovable. São **53 pacotes** com **12 ocorrências conhecidas**, distribuídas entre **6 High e 6 Medium**:
+
+| Pacote | Versão mostrada no Lovable | High | Medium |
+|---|---|---:|---:|
+| `@tanstack/react-start` | `1.168.60` | 3 | 2 |
+| `@tanstack/router-plugin` | `1.168.42` | 1 | 2 |
+| `@tailwindcss/vite` | `4.3.3` | 1 | 0 |
+| `zod` | `3.25.76` | 1 | 0 |
+| `@tanstack/react-router` | `1.170.41` | 0 | 2 |
+| **Total** | | **6** | **6** |
+
+Não foram mostrados identificadores GHSA/CVE, intervalo afetado, versões corrigidas ou se são alertas diretos ou transitivos. Por isso, **não são 12 explorações comprovadas no ClimaCiclo**, mas também **não estão resolvidas**. O Deep Scan exibir `No issues found` não substitui a análise de dependências.
+
+**Próxima ação:** usar `Download list` da interface, examinar as informações exportadas e vincular cada alerta ao GHSA/CVE correspondente. Classificar se afeta produção ou somente build/desenvolvimento e se o uso do projeto aciona a condição vulnerável. Preparar atualizações em branch separada, modificar `bun.lock` junto com `package.json`, executar testes, TypeScript, build e nova varredura. Não usar `Try to fix all` antes de classificar cada alerta.
+
+Como referência cruzada, o advisory `GHSA-qx66-fv34-fjm8` (`CVE-2026-102989`) foi corrigido na versão `@tanstack/react-start@1.168.60`, segundo a equipe TanStack: https://tanstack.com/blog/tanstack-start-security-update-cve-2026-102989 . Isso **não identifica** quais são os cinco alertas exibidos para esse pacote na interface; conferir cada identificador exportado antes de inferir.
+
+**Decisão da pré-entrega:** nenhuma correção indiscriminada de versões e nenhuma publicação com coleta ativa de dados pessoais antes de avaliar os alertas High aplicáveis. Evidências visuais compartilhadas na conversa ainda necessitam de inclusão em `evidencias/`.
