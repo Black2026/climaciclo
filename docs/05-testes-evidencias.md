@@ -5,7 +5,7 @@ Testes previstos e observações reais. Nunca rotular como aprovado algo ainda n
 | ID | Cenário | Critério de aceite | Estado |
 |---|---|---|---|
 | G1-001 | CTA "Montar meu acompanhamento" | Abrir `/montar-plano` sem erro | **Reteste aprovado: Etapa 1 exibida; antes 404** |
-| G1-002 | Etapas do formulário | Avançar/voltar preservando campos | Pendente |
+| G1-002 | Etapas do formulário | Avançar/voltar preservando campos | **Parcial:** avanço da etapa 1 para a 2 confirmado; retorno e etapa 3 pendentes |
 | G1-003 | Responsividade | 320, 375, 390, 768 e 1280 px sem overflow | Pendente |
 | G1-004 | Consentimento desmarcado | Bloquear envio | Pendente |
 | G2-001 | Submeter lead válido | Persistir `status=novo` e código | Pendente |
@@ -24,4 +24,4 @@ Testes previstos e observações reais. Nunca rotular como aprovado algo ainda n
 ## Protocolo de evidência
 Capturar tela, rota/URL, data, resultado esperado, resultado observado, correção e reteste. Ocultar nomes, telefones, e-mails, tokens e credenciais. Screenshots de prévia não demonstram funcionamento de backend.
 
-Evidências registradas no GitHub: prévia da landing, erro 404 original e sincronização Lovable–GitHub. Em 29/10/2026 o usuário mostrou a Etapa 1 da rota `/montar-plano` funcionando, mas a captura deste reteste ainda aguarda upload no repositório. G1-002, G1-003 e G1-004 ainda pendentes. Ver [incidente e reteste G1-001](16-teste-g1-404.md).
+Evidências registradas no GitHub: prévia da landing, erro 404 original e sincronização Lovable–GitHub. Em 29/10/2026 o usuário mostrou a Etapa 1 da rota `/montar-plano` funcionando, mas a captura deste reteste ainda aguarda upload no repositório. G1-002 parcialmente verificado com captura adicional das Etapas 1 e 2 (ambiente residencial, 2 aparelhos Split, cidade Recife, bairro Boa Viagem, preferência semestral e interesse em limpeza). Voltar preservando os dados, avançar à etapa 3, testar validações e verificar responsividade continuam pendentes. G1-003 e G1-004 não executados. Ver [incidente e reteste G1-001](16-teste-g1-404.md).
