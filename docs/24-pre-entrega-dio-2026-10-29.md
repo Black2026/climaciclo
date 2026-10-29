@@ -51,3 +51,15 @@ A entrega da DIO exige, conforme enunciado fornecido, um **MVP publicado que abr
 Pagamento integrado, Stripe, notificações automáticas, bot no WhatsApp, agendamento e marketplace podem ficar para depois. **Não é adequado deixar para depois a coleta segura, a gestão básica e a publicação**, que formam o MVP descrito no desafio.
 
 **Observação:** Branch de preparação não é uma implantação. Não alterar `ready_for_real_data=false` somente para cumprir checklist. Não divulgar a URL de prévia privada como URL pública.
+
+
+## Registro de segurança do Lovable — 29/10/2026
+
+Captura da interface do Lovable (**Mais → Segurança**) fornecida pelo participante:
+
+- **Quick security scan**: última varredura cerca de 3 horas antes da captura; mensagem "No issues found". Isso não garante ausência de falhas.
+- **Deep security scan**: indicado como recomendado, gratuito e "Not scanned yet"; **pendente de execução**.
+- **Project dependencies**: **53 packages / 12 known issues**. A captura não discrimina severidade, pacote ou explorabilidade. **Exige abrir "Review" e tratar achados aplicáveis**.
+- Nenhum botão de publicação foi acionado; não foi atestada uma URL pública.
+
+**Decisão:** não marcar revisão de segurança como concluída nem habilitar recebimento de dados reais. Próximas evidências: resultado completo do Deep Scan e lista de alertas de dependências com severidades, sem divulgar qualquer segredo. Documentar correções e nova execução dos checks. As capturas continuam fornecidas via conversa e devem ser adicionadas a `evidencias/` quando preparadas para o portfólio.
