@@ -11,7 +11,7 @@ Testes previstos e observações reais. Nunca rotular como aprovado algo ainda n
 | G2-001 | Submeter lead válido | Persistir `status=novo` e código | Pendente |
 | G2-002 | Envio repetido | Uma única linha para uma chave | Pendente |
 | G2-003 | Falha de rede e retry | Nenhum falso sucesso; mesmo código | Pendente |
-| G2-004 | Privacidade incompleta | Bloquear dados reais | **Aprovado para RPC direta:** teste controlado de `submit_lead` respondeu `created=false`, `error=not_ready`, `public_code=NULL`; falta testar pela interface e conferir contagem de linhas |
+| G2-004 | Privacidade incompleta | Bloquear dados reais | **Aprovado para RPC direta:** função retornou `created=false`, `error=not_ready`, `public_code=NULL` e nova consulta confirmou `leads=0`, `lead_rate_limits=0`, `ready_for_real_data=false`; interface ainda não testada |
 | G3-001 | Administrador | Login válido, logout, F5 mantém sessão | Pendente |
 | G3-002 | Anônimo/usuário sem role | Sem acesso a dados ou funções privadas | Pendente |
 | G4-001 | Conversão | Um cliente por lead; status sincronizado | Pendente |
