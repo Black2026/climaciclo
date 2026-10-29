@@ -117,3 +117,10 @@ O participante executou uma consulta somente leitura a `public.app_settings` par
 **Próximo ensaio proposto:** invocar `submit_lead` somente com valores fictícios dentro de transação `READ ONLY`, encerrada por `ROLLBACK`. Espera-se `public_code=null`, `created=false`, `error=not_ready`. O teste deverá ser interrompido se a interface não oferecer execução confiável do bloco ou ocorrer erro. Não alterar `ready_for_real_data` nem enviar dados reais.
 
 A captura desta verificação está na conversa e ainda precisa ser incorporada a `evidencias/` se for usada no portfólio.
+
+
+## Ordem da trava de privacidade no código SQL
+
+**29/10/2026 — verificação estática confirmada por captura.** A consulta ao catálogo retornou `true` nos três campos `possui_trava`, `possui_insercao` e `trava_antes_da_insercao`. O texto `ready_for_real_data` ocorre antes de `insert into public.leads` na definição da função.
+
+Isso é evidência de **ordenação textual**, não prova de que toda chamada à função bloqueia a inserção. A configuração `ready_for_real_data=false` também foi comprovada em consulta separada. **Próxima condição:** realizar testes comportamentais somente com transação realmente isolada, ou após preparar ambiente específico de testes, sem liberação da coleta real. O usuário ainda não executou esse teste funcional.
