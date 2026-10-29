@@ -98,3 +98,11 @@ A consulta não executou a função nem comprovou ausência de efeitos colaterai
 Em 29/10/2026, foi executada consulta somente leitura com `pg_get_functiondef` para a função `public.submit_lead`. O Lovable Cloud retornou uma linha e o começo de `CREATE OR REPLACE FUNCTION public.submit_lead(...`, confirmando que a definição SQL é recuperável. **A interface truncou a exibição; o corpo da função ainda não foi inspecionado nem comparado integralmente.**
 
 Próximo teste: consulta somente leitura com indicadores de presença de verificações de consentimento, privacidade, idempotência e rate limit. Esses indicadores textuais não provam o comportamento da implementação; a homologação dependerá de testes de execução em ambiente controlado.
+
+## Verificação estática dos seis mecanismos de submit_lead — 29/10/2026
+
+A consulta ao catálogo PostgreSQL com `pg_get_functiondef` e expressões `ILIKE` retornou `true` em **seis de seis** verificações textuais: validação de `p_consent`, presença de `ready_for_real_data`, `idempotency_key`, `lead_rate_limits`, `ON CONFLICT` e `public.leads`.
+
+**Evidência:** captura da tela SQL Editor enviada pelo participante, ainda não anexada ao repositório. A verificação apenas confirma que o texto implantado contém esses trechos; não comprova a sequência de execução nem o comportamento em falhas, duplicidades ou acessos sem autorização.
+
+**Próxima verificação funcional:** testar a recusa `not_ready` enquanto `app_settings.ready_for_real_data=false`, com dados fictícios e transação de somente leitura/rollback; nenhuma liberação de captura de leads reais está autorizada nesta etapa.
