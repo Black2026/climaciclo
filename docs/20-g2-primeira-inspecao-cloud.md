@@ -55,3 +55,16 @@ Nova captura de tela do participante confirma a expressão **`USING has_role(aut
 **Resultado:** checagem de administrador na cláusula `USING` **confirmada visualmente** para leitura e atualização. A captura **não exibe `WITH CHECK`**, de modo que essa cláusula não foi validada separadamente pela interface. A migração SQL do repositório prevê `WITH CHECK` para `UPDATE`, mas é necessário verificar os detalhes no banco se houver divergência. O teste prático de acesso por usuário sem privilégios **continua pendente**. Não declarar segurança totalmente homologada.
 
 **Próximo passo:** inspecionar a RLS da tabela `leads`, especialmente as políticas `SELECT`, `INSERT`, `UPDATE` e `DELETE`, confirmando quais roles estão autorizadas e se há uma cláusula `has_role` restritiva. Não editar políticas nem criar leads reais neste momento.
+
+
+## Inspeção inicial das políticas RLS de leads — 29/10/2026
+
+Captura da interface **Database → leads → RLS policies** confirma que a tabela `leads` apresenta `RLS enabled` e quatro políticas para `authenticated`:
+- `admin select leads` — `SELECT` (coluna `USING`);
+- `admin insert leads` — `INSERT` (coluna `CHECK`);
+- `admin update leads` — `UPDATE` (coluna `USING`);
+- `admin delete leads` — `DELETE` (coluna `USING`).
+
+**Limite da evidência:** as condições das regras ainda não estão expandidas, portanto a captura não comprova que cada uma verifica `has_role(auth.uid(), 'admin'::app_role)`. A ausência de política `anon` na lista é coerente com o desenho do projeto, mas os privilégios, a RLS, os caminhos de Server Function e testes reais de acesso precisam ser conferidos antes da homologação de segurança.
+
+**Próximo teste:** expandir as quatro políticas e documentar `USING`/`WITH CHECK` sem editar nenhuma regra. A captura enviada na conversa ainda requer inclusão em `evidencias/` caso seja usada no portfólio.
