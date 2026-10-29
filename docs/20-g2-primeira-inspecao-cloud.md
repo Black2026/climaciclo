@@ -124,3 +124,12 @@ A captura desta verificação está na conversa e ainda precisa ser incorporada 
 **29/10/2026 — verificação estática confirmada por captura.** A consulta ao catálogo retornou `true` nos três campos `possui_trava`, `possui_insercao` e `trava_antes_da_insercao`. O texto `ready_for_real_data` ocorre antes de `insert into public.leads` na definição da função.
 
 Isso é evidência de **ordenação textual**, não prova de que toda chamada à função bloqueia a inserção. A configuração `ready_for_real_data=false` também foi comprovada em consulta separada. **Próxima condição:** realizar testes comportamentais somente com transação realmente isolada, ou após preparar ambiente específico de testes, sem liberação da coleta real. O usuário ainda não executou esse teste funcional.
+
+
+## Trecho de privacidade observado (resposta abreviada) — 29/10/2026
+
+A consulta SQL por `substring(pg_get_functiondef(...))` devolveu trecho contendo a leitura de `s.ready_for_real_data` de `public.app_settings` e o início da condição `if not coalesce(v_ready,false) then return query select ...`. A interface cortou o fim do retorno; a captura **não mostra integralmente** o literal `not_ready`. A migração SQL versionada apresenta o retorno `not_ready`.
+
+**Conclusão:** evidência adicional de que a função lê a configuração e tem ramificação de bloqueio antes da inserção. Trata-se de inspeção estática; ainda não há ensaio funcional nem teste de persistência. A configuração `ready_for_real_data` deve continuar `false` enquanto o MVP não estiver pronto para coleta real.
+
+**Próxima etapa:** ensaio funcional em condições controladas, usando unicamente dados fictícios, sem usar o painel de produção para executar mudanças não previstas e sem alterar as configurações de privacidade.
