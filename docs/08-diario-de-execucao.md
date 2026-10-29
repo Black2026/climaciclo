@@ -21,3 +21,6 @@
 Concluir o G1 (a rota 404 está corrigida, Etapas 1→2→3 e retorno preservando dados foram validados; o consentimento desmarcado foi validado; falta validar todas as larguras previstas de responsividade), implementar e validar G2–G5, configurar privacidade e administrador, revisar segurança, publicar URL e tornar repositório público para entrega na DIO.
 
 **Não foi comprovada** validação comercial com clientes reais, persistência Cloud, autenticação funcional, cadastro de atendimentos ou publicação.
+
+## Homologação G1 e início G2 — 29/10/2026
+O participante confirmou os testes nas larguras 320, 375, 390, 768 e 1280 px sem cortes nem rolagem horizontal. Junto às evidências de navegação, preservação de campos e consentimento, o Gate G1 foi homologado por teste manual. Ainda faltam capturas de todas as larguras. Para G2, a auditoria de código localizou a migração SQL e a função servidor de envio de lead; sua aplicação no banco real e o teste de persistência ainda não estão comprovados. Nenhum dado real deve ser enviado até a configuração de privacidade, segurança e testes do Cloud.
