@@ -17,15 +17,21 @@ O `bun.lock` da `main` contém:
 | `seroval` | `1.6.12` |
 | `zod` | `4.6.6` |
 
+## Homologação visual das dependências no Lovable — 29/10/2026
+
+O participante enviou uma nova captura de **Mais → Segurança** após a integração do PR #5. A seção **Project dependencies** agora exibe **53 packages · 0 known issues**. O cartão **Deep security scan** está como **Up to date** e o painel geral mostra **No issues found**; o **Quick security scan** foi realizado anteriormente, exibindo "Last scan há 4 minutos".
+
+**Resultado:** remediação dos **12 alertas originalmente reportados** homologada pelo painel do Lovable, passando de **12 para 0 alertas conhecidos**. Essa evidência não implica ausência de qualquer vulnerabilidade no futuro. O PNG foi fornecido na conversa, mas ainda **não foi anexado à pasta `evidencias/`**.
+
 ## Verificações ainda pendentes
 
-Esta confirmação é do **repositório GitHub e da CI**. Ainda não significa que o Lovable tenha sincronizado o commit ou que a lista de vulnerabilidades do aplicativo tenha sido zerada.
+A atualização das dependências passou na CI e a nova varredura do Lovable não mostra alertas conhecidos. Permanecem pendentes os testes manuais de regressão após a atualização do Zod e os demais requisitos funcionais e de entrega do MVP.
 
-1. No Lovable, verificar em **Mais → Git** a sincronização com a `main`.
-2. Em **Mais → Segurança → Project dependencies**, usar **Scan dependencies**. Registrar nova contagem de alertas e, se houver, seus detalhes.
+1. No Lovable, conferir em **Mais → Git** o status exato de sincronização com a `main` (a captura de Segurança não exibe essa tela).
+2. **Concluído:** nova captura da seção de dependências mostra **0 known issues**.
 3. Repetir manualmente as três etapas do formulário com dados fictícios, consentimento desmarcado/marcado, retorno de etapa, revisão, rota de confirmação com F5, copiar código e responsividade.
 4. Anexar capturas sem dados pessoais à pasta `evidencias/`.
 5. Não ativar `ready_for_real_data`, não liberar coleta de leads nem afirmar que o MVP está publicado. As pendências de privacidade, autenticação/admin e entrega DIO permanecem abertas.
 6. Repositório `Black2026/climaciclo` encontrava-se **privado** na verificação; não mudar visibilidade antes de auditar histórico de arquivos de ambiente e demais segredos.
 
-**Conclusão:** remediação integrada e testada em CI; homologação visual e nova varredura do Lovable ainda pendentes.
+**Conclusão:** remediação integrada e testada em CI, com **0 alertas conhecidos** na nova varredura de dependências do Lovable. Regressão manual do formulário, segurança geral, admin, publicação e entrega final DIO continuam pendentes.
