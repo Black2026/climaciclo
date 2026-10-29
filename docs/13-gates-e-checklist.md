@@ -4,7 +4,7 @@ Gates são marcos que exigem comprovação, não apenas promessa do modelo.
 
 | Gate | Entrega mínima | Verificação obrigatória | Estado |
 |---|---|---|---|
-| G1 | Landing, rotas, configurador, validações, política provisória | Clique CTA sem 404, navegação em etapas, tamanhos mobile, sem envio real | **Parcial:** rota, fluxo, retorno e bloqueio sem consentimento confirmados; amostra mobile exibida, validação de todas as larguras pendente |
+| G1 | Landing, rotas, configurador, validações, política provisória | Clique CTA sem 404, navegação em etapas, tamanhos mobile, sem envio real | **Homologado em 29/10/2026:** fluxo, retorno e consentimento testados; participante confirmou 320, 375, 390, 768 e 1280 px sem cortes ou rolagem horizontal |
 | G2 | Cloud, tabelas, server functions | Lead salvo, idempotência, rate limit, consentimento, privacidade, falha de rede | Pendente |
 | G3 | Auth, roles, RLS | Admin autorizado, anônimo e usuário sem role negados, F5 | Pendente |
 | G4 | Dashboard e gestão | Lead→cliente→ordem→lembrete, transação e persistência | Pendente |
