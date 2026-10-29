@@ -38,3 +38,22 @@ O participante enviou quatro capturas da prévia Lovable com o código integrado
 **Resultado:** aprovado para o comportamento demonstrativo e bloqueio visual do G2. Isso NÃO prova ainda a execução da Server Function pela UI, a configuração efetiva da variável de ambiente, a persistência positiva, idempotência ou a página de confirmação.
 
 **Próximo teste:** navegar diretamente para `/solicitacao-recebida?codigo=CC-ABC123` usando a URL da prévia. Deve mostrar a consulta do código sem afirmar recebimento real e sem exibir informações pessoais. Confirmar também F5 na rota. Capturas ainda precisam ser anexadas ao repositório para servirem de evidência visual de portfólio.
+
+
+## G2-CONF-001 — Rota de confirmação sem consulta pública (29/10/2026)
+
+O participante abriu a prévia externa do Lovable diretamente em `/solicitacao-recebida?codigo=CC-ABC123` e confirmou que a página continuou funcional após pressionar **F5**. A captura mostra:
+
+- Título **“Consultar o código informado”** e aviso de que o endereço não permite verificar uma solicitação no banco;
+- Código fictício `CC-ABC123`, botão “Copiar código e resumo” e retorno ao início;
+- Ausência de “Solicitação recebida” e de dados pessoais;
+- Layout do ClimaCiclo renderizado com rodapé.
+
+**Resultado: aprovado — navegação direta e recarga F5 sem falsa confirmação.** Essa evidência verifica somente a rota de consulta sem estado em memória. Não demonstra recebimento bem-sucedido, gravação real, funcionamento de WhatsApp ou persistência. A imagem foi compartilhada na conversa e ainda não foi anexada ao GitHub.
+
+### Próximas etapas técnicas
+
+1. Validar build/testes automatizados, sem liberar os envios.
+2. Testar o botão de copiar o código, sem dados reais.
+3. Preparar ambiente isolado de testes para **persistência positiva, idempotência, retries e rate limit**. Não alterar `ready_for_real_data=false` no projeto atual nem remover travas de liberação para testar na produção.
+4. Somente após privacidade completa e segurança revisada, planejar abertura controlada ao público.
