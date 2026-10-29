@@ -1,9 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, CheckCircle2, ClipboardCheck, LockKeyhole } from "lucide-react";
 import { NotReadyBanner, SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 import { privacyQuery } from "@/lib/queries";
+import { submitLead } from "@/lib/public.functions";
+import { SUBMIT_ERROR_MESSAGES, type SubmitError } from "@/lib/lead-logic";
+import { setConfirmation } from "@/lib/confirmation-store";
+import { PUBLIC_LEAD_SUBMISSION_RELEASED } from "@/lib/g2-release";
 import {
   ENVIRONMENTS,
   FOLLOW_UPS,
@@ -42,6 +46,12 @@ const labelClass = "block text-sm font-semibold text-foreground";
 
 function MontarPlano() {
   const { data: privacy } = useSuspenseQuery(privacyQuery);
+  const navigate = useNavigate();
+  const submissionInFlight = useRef(false);
+  const [pending, setPending] = useState(false);
+  const [submissionKey, setSubmissionKey] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<SubmitError | null>(null);
+  const canSend = PUBLIC_LEAD_SUBMISSION_RELEASED && privacy.readyForRealData;
   const [step, setStep] = useState<Step>(1);
   const [draft, setDraft] = useState<LeadDraft>(() => ({
     ...emptyDraft,
@@ -50,12 +60,14 @@ function MontarPlano() {
   const [errors, setErrors] = useState<Errors>({});
   const [reviewed, setReviewed] = useState(false);
 
-  // G1 is a preview only. No personal data is persisted or sent to any API.
-  // Form submission will be implemented separately after G2/Cloud and privacy validation.
+  // Release flag is OFF until G2 tests are complete; the server has its own independent gate.
+  // The draft remains exclusively in component state and is lost after a refresh.
   function update<K extends keyof LeadDraft>(key: K, value: LeadDraft[K]) {
     setDraft((previous) => ({ ...previous, [key]: value }));
     setErrors((previous) => ({ ...previous, [key]: undefined }));
     setReviewed(false);
+    setSubmitError(null);
+    setSubmissionKey(null); // changed data = new logical attempt; retries keep the key
   }
 
   function validateCurrentStep(): boolean {
@@ -90,6 +102,30 @@ function MontarPlano() {
     setStep((current) => Math.max(1, current - 1) as Step);
   }
 
+  async function sendRequest() {
+    if (!canSend || !reviewed || pending || submissionInFlight.current) return;
+    if (!validateCurrentStep()) return;
+    submissionInFlight.current = true;
+    setPending(true);
+    setSubmitError(null);
+    const key = submissionKey ?? crypto.randomUUID();
+    setSubmissionKey(key);
+    try {
+      const result = await submitLead({ data: { ...draft, idempotency_key: key } });
+      if (!result.ok) {
+        setSubmitError(result.error);
+        return; // Retry keeps the same idempotency key.
+      }
+      setConfirmation({ code: result.publicCode, summary: result.summary });
+      await navigate({ to: "/solicitacao-recebida", search: { codigo: result.publicCode } });
+    } catch {
+      setSubmitError("server_error");
+    } finally {
+      submissionInFlight.current = false;
+      setPending(false);
+    }
+  }
+
   function errorFor(field: keyof LeadDraft) {
     return errors[field] ? (
       <p id={`error-${field}`} role="alert" className="mt-1 text-sm text-destructive">
@@ -112,14 +148,15 @@ function MontarPlano() {
           <h1 className="mt-4 text-3xl font-bold leading-tight md:text-4xl">Monte seu acompanhamento</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
             Conheça as três etapas para organizar o cuidado com seu ar-condicionado.
-            Nesta primeira versão, o formulário funciona apenas como demonstração.
+            {canSend ? "Revise os dados antes do envio." : "Nesta fase, o formulário funciona apenas como demonstração."}
           </p>
         </div>
 
         <div className="mt-6">
           <NotReadyBanner>
-            Estamos testando a experiência. Use apenas dados fictícios: este formulário não envia
-            nem grava solicitações, mesmo que a configuração de privacidade esteja preenchida.
+            {canSend
+              ? "Revise os dados e confirme o consentimento antes de solicitar atendimento."
+              : "Estamos testando a experiência. Use somente dados fictícios; o envio de solicitações permanece bloqueado."}
           </NotReadyBanner>
         </div>
 
@@ -238,7 +275,7 @@ function MontarPlano() {
           {step === 3 && (
             <div className="mt-7 space-y-6">
               <p className="rounded-xl bg-muted p-3 text-sm text-muted-foreground">
-                Para simular esta etapa, use nome e contato <strong>fictícios</strong>. Nada será enviado.
+                {canSend ? "Confira os dados para contato antes de enviar." : <>Use nome e contato <strong>fictícios</strong>. Nada será enviado.</>}
               </p>
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
@@ -273,7 +310,7 @@ function MontarPlano() {
                 <span className="text-sm leading-relaxed">
                   Concordo com o uso dos dados informados para responder a uma solicitação, de acordo com a
                   {" "}<Link className="font-semibold text-primary underline" to="/privacidade">Política de Privacidade</Link>.
-                  Nesta demonstração, os dados ficam apenas nesta tela.
+                  {!canSend && " Nesta demonstração, os dados ficam apenas nesta tela."}
                 </span>
               </label>
               {errorFor("consent")}
@@ -288,7 +325,7 @@ function MontarPlano() {
                   <p className="mt-1 text-sm">Local: {draft.city} · {draft.neighborhood}</p>
                   <p className="mt-1 text-sm">Acompanhamento: {labelOf(FOLLOW_UPS, draft.follow_up_pref)}</p>
                   <p className="mt-1 text-sm">Interesses: {draft.interests.map((v) => labelOf(INTERESTS, v)).join(", ")}</p>
-                  <p className="mt-3 text-sm font-semibold">Nenhuma solicitação foi enviada ou armazenada.</p>
+                  {!canSend && <p className="mt-3 text-sm font-semibold">Nenhuma solicitação foi enviada ou armazenada.</p>}
                 </section>
               )}
             </div>
@@ -314,20 +351,26 @@ function MontarPlano() {
         <section className="mt-6 rounded-2xl border bg-card p-5">
           <h2 className="flex items-center gap-2 text-sm font-semibold">
             <LockKeyhole className="h-5 w-5 text-primary" aria-hidden />
-            Envio de solicitação desativado durante o Gate G1
+            {canSend ? "Confirmação da solicitação" : "Envio de solicitação desativado durante o Gate G2"}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            A próxima etapa do projeto habilitará o Lovable Cloud e verificará segurança,
-            privacidade e persistência. Até lá, o formulário serve exclusivamente para testes visuais.
+            {canSend
+              ? "O pedido só será considerado recebido depois que o servidor confirmar a gravação."
+              : "O fluxo de persistência está preparado, mas permanece bloqueado no aplicativo e no servidor até a conclusão dos testes e da privacidade."}
           </p>
-          <button type="button" disabled
-            className="mt-4 min-h-11 w-full cursor-not-allowed rounded-xl bg-muted px-4 font-semibold text-muted-foreground"
-            aria-label="Enviar solicitação indisponível nesta demonstração">
-            Enviar solicitação — em breve
+          {submitError && (
+            <p role="alert" className="mt-3 rounded-xl border border-destructive/40 p-3 text-sm text-destructive">
+              {SUBMIT_ERROR_MESSAGES[submitError]}
+            </p>
+          )}
+          <button type="button" onClick={() => void sendRequest()}
+            disabled={!canSend || !reviewed || pending}
+            className="mt-4 min-h-11 w-full rounded-xl bg-primary px-4 font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground">
+            {pending ? "Confirmando recebimento..." : canSend ? "Enviar solicitação" : "Enviar solicitação — em breve"}
           </button>
-          {privacy.readyForRealData && (
+          {!canSend && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Mesmo com informações de privacidade configuradas, o envio só será liberado após os testes do Gate G2.
+              A coleta real está desativada. O aceite da política de privacidade não libera sozinho o sistema.
             </p>
           )}
         </section>
