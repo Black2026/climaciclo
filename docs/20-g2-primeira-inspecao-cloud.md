@@ -133,3 +133,11 @@ A consulta SQL por `substring(pg_get_functiondef(...))` devolveu trecho contendo
 **Conclusão:** evidência adicional de que a função lê a configuração e tem ramificação de bloqueio antes da inserção. Trata-se de inspeção estática; ainda não há ensaio funcional nem teste de persistência. A configuração `ready_for_real_data` deve continuar `false` enquanto o MVP não estiver pronto para coleta real.
 
 **Próxima etapa:** ensaio funcional em condições controladas, usando unicamente dados fictícios, sem usar o painel de produção para executar mudanças não previstas e sem alterar as configurações de privacidade.
+
+## Teste funcional de recusa `not_ready` — 29/10/2026
+
+Foi executado no SQL Editor um ensaio de `public.submit_lead` com **dados fictícios**, utilizando o bloco de transação `BEGIN TRANSACTION READ ONLY` / `ROLLBACK` conforme instrução apresentada ao participante. A captura de resultado mostra uma linha com `created=false`, `error=not_ready` e `public_code=NULL`.
+
+**Resultado: aprovado para o cenário de recusa pela trava de privacidade.** A função foi invocada e respondeu com o bloqueio esperado enquanto `app_settings.ready_for_real_data=false`. A captura de resultados isoladamente não verifica o bloco completo da transação; o procedimento executado foi o enviado anteriormente na conversa.
+
+**Limites:** a captura não comprova que o banco continua sem linhas novas; por isso recomenda-se conferir contagens em `leads` e `lead_rate_limits` sem consultar informações pessoais. O comportamento de persistência quando habilitado, idempotência e rate limit ainda não foram testados. Não liberar envio real do formulário nem mudar `ready_for_real_data` nesta fase.
