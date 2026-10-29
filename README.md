@@ -96,7 +96,7 @@ Documentos correspondentes:
 - [Prompts de revisão e correção, com status](docs/18-prompts-revisoes-e-correcoes.md)
 - [Gates e critérios de aceite](docs/13-gates-e-checklist.md)
 
-**Ocorrência e reteste real:** em 29/10/2026, clicar no CTA *Montar meu acompanhamento* apresentou **404 — Página não encontrada**. A inspeção do código confirmou a ausência da rota `/montar-plano`. Após criá-la no GitHub, uma nova captura mostrou a **Etapa 1 do configurador carregada, sem 404**. Uma segunda rodada com capturas confirmou o avanço **da Etapa 1 para a Etapa 2**, com ambos os formulários preenchidos. Um novo teste confirmou, segundo o usuário, retorno com dados preservados e avanço até a **Etapa 3**, com resumo de demonstração e mensagem de nenhum envio/armazenamento. **Consentimento desmarcado foi validado em tela mobile**, exibindo "É preciso aceitar para enviar"; o botão de envio real permanece desativado. Ainda falta homologar todas as larguras e os demais cenários de validação negativa. Ver [registro do G1](docs/16-teste-g1-404.md).
+**Ocorrência e reteste real:** em 29/10/2026, clicar no CTA *Montar meu acompanhamento* apresentou **404 — Página não encontrada**. A inspeção do código confirmou a ausência da rota `/montar-plano`. Após criá-la no GitHub, uma nova captura mostrou a **Etapa 1 do configurador carregada, sem 404**. Uma segunda rodada com capturas confirmou o avanço **da Etapa 1 para a Etapa 2**, com ambos os formulários preenchidos. Um novo teste confirmou, segundo o usuário, retorno com dados preservados e avanço até a **Etapa 3**, com resumo de demonstração e mensagem de nenhum envio/armazenamento. **Consentimento desmarcado foi validado em tela mobile**, exibindo "É preciso aceitar para enviar"; o botão de envio real permanece desativado. O participante declarou também ter concluído a responsividade em 320, 375, 390, 768 e 1280 px. A integração posterior do Gate G2 preservou a demonstração e o botão de envio desativado. Ver [registro do G1](docs/16-teste-g1-404.md).
 
 ## 8. Status verdadeiro de execução e testes
 
@@ -104,8 +104,8 @@ Documentos correspondentes:
 |---|---|---|
 | Dor, modelo de negócio, mercado e Canvas | **Planejados** | Documentos `docs/00`–`docs/03` |
 | Prompt inicial, Plan e revisão SDD | **Concluídos** | `docs/04`, `docs/11`, `docs/12`, `docs/15` |
-| **G1 — Landing e formulário** | **Parcial / rota corrigida** | Landing, etapas 1–3 e retorno preservando dados confirmados; consentimento desmarcado aprovado e uma captura mobile conferida; faltam testes de outras larguras e validações negativas adicionais |
-| G2 — Lovable Cloud e leads persistentes | **Não comprovado** | Envio real + consulta ao banco + teste de retry |
+| **G1 — Landing e formulário** | **Homologado por testes manuais em 29/10/2026** | Participante confirmou 320, 375, 390, 768 e 1280 px sem cortes ou rolagem horizontal; fluxo e consentimento verificados |
+| G2 — Lovable Cloud e leads persistentes | **Em andamento, não homologado** | 7 tabelas e RLS observadas; RPC restrita à service_role; recusa `not_ready` e contagens zeradas comprovadas; integração da UI testada com envio bloqueado; persistência positiva pendente |
 | G3 — Login administrativo e RLS | **Não comprovado** | Sessão, role, tentativas anônimas, APIs |
 | G4 — Clientes, atendimentos, lembretes | **Não comprovado** | CRUD real e persistência após F5 |
 | G5 — WhatsApp, testes, security scan | **Não comprovado** | Testes + revisão sem achados críticos |
@@ -129,7 +129,7 @@ O Lovable exibiu uma mensagem de falta de créditos, interrompendo o desenvolvim
 
 1. **Concluído:** conectar o projeto Lovable à conta GitHub `Black2026`: repositório `climaciclo` na branch `main`, com mensagem `In sync with GitHub` no editor.
 2. **Concluído:** README, 20 documentos `docs/`, inventário e três capturas PNG publicados no repositório, preservando o código do Lovable.
-3. **Rota 404 corrigida e abertura retestada.** Etapas, retorno e consentimento foram verificados; homologar responsividade nas larguras previstas e completar validações negativas para encerrar G1.
+3. **Gate G1 homologado:** rota 404 corrigida; etapas, retorno, consentimento e as cinco larguras conferidos manualmente pelo participante.
 4. Concluir G2–G5 e documentar evidências reais e configurações de segurança.
 5. Publicar e testar a URL pública, conferir ausência de credenciais no Git, tornar o repositório público e entregar o **link do repositório** na DIO.
 

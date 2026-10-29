@@ -30,3 +30,11 @@ Data: 29/10/2026. Commit de implementação: `5ff1ac8`.
 5. Conservar `ready_for_real_data=false` e não enviar dados reais.
 
 **Estado:** código versionado e recuperado do GitHub após commit; testes de compilação e browser ainda pendentes. Gate G2 aberto.
+
+## Verificação visual do formulário após a integração — 29/10/2026
+
+O participante enviou quatro capturas da prévia Lovable com o código integrado. Foram observados: Etapa 3 (Contato e revisão) carregada, campos preenchidos apenas com dados fictícios, consentimento desmarcado rejeitado com a mensagem "É preciso aceitar para enviar", consentimento marcado gerando resumo de demonstração, aviso "Nenhuma solicitação foi enviada ou armazenada", mensagem "Envio de solicitação desativado durante o Gate G2" e botão "Enviar solicitação — em breve" indisponível.
+
+**Resultado:** aprovado para o comportamento demonstrativo e bloqueio visual do G2. Isso NÃO prova ainda a execução da Server Function pela UI, a configuração efetiva da variável de ambiente, a persistência positiva, idempotência ou a página de confirmação.
+
+**Próximo teste:** navegar diretamente para `/solicitacao-recebida?codigo=CC-ABC123` usando a URL da prévia. Deve mostrar a consulta do código sem afirmar recebimento real e sem exibir informações pessoais. Confirmar também F5 na rota. Capturas ainda precisam ser anexadas ao repositório para servirem de evidência visual de portfólio.
