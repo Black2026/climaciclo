@@ -63,3 +63,16 @@ Captura da interface do Lovable (**Mais → Segurança**) fornecida pelo partici
 - Nenhum botão de publicação foi acionado; não foi atestada uma URL pública.
 
 **Decisão:** não marcar revisão de segurança como concluída nem habilitar recebimento de dados reais. Próximas evidências: resultado completo do Deep Scan e lista de alertas de dependências com severidades, sem divulgar qualquer segredo. Documentar correções e nova execução dos checks. As capturas continuam fornecidas via conversa e devem ser adicionadas a `evidencias/` quando preparadas para o portfólio.
+
+
+## Resultado do Deep Security Scan — 29/10/2026
+
+O participante executou o **Deep security scan** no Lovable e compartilhou captura da tela **Security**. A interface mostra:
+- Deep security scan: **Up to date**, última análise há cerca de 2 segundos;
+- Quick security scan: **Up to date**, última análise há cerca de 2 segundos;
+- Painel central: **No issues found** ("The last security scan didn't surface any issues. The scanner can't catch every possible risk.");
+- Project dependencies: **53 packages · 12 known issues**; os detalhes e severidades ainda não foram exibidos.
+
+**Conclusão parcial:** os dois scans estão atualizados e nenhum problema foi reportado no relatório geral apresentado. Não declarar ausência universal de vulnerabilidades: ainda são **12 alertas conhecidos em dependências** não classificados, além das pendências de funcionamento/admin/privacidade/publicação. Antes da entrega, abrir **Review** nas dependências, registrar pacote, versão, severidade, recomendação de correção e eventual impacto em produção. Não atualizar pacotes de forma indiscriminada.
+
+**Evidência:** captura enviada em conversa; o PNG ainda precisa ser incluído em `evidencias/` para o portfólio. O projeto continua em preparação; **não publicado nem pronto para coletar dados pessoais reais**.
