@@ -34,3 +34,13 @@ Captura fornecida pelo participante na tela **Mais → Database** do Lovable. Fo
 O participante apresentou captura da tabela `app_settings` no Lovable Cloud mostrando a única linha existente. O campo **`ready_for_real_data` está `false`**; `controller_name`, `controller_document`, `privacy_contact_channel`, `retention_period` e `privacy_updated_at` aparecem como `null`. Os campos não foram alterados.
 
 **Conclusão limitada:** a trava de preparação está desligada no estado consultado. Ainda é necessário comprovar que a função `submit_lead` respeita esse valor, que as políticas RLS estão corretamente aplicadas e que a persistência funciona. A próxima inspeção será visual das políticas RLS de `app_settings`, seguida das políticas da tabela `leads`, sem executar SQL ou criar dados pessoais. A captura adicional ainda aguarda upload no repositório.
+
+## Verificação visual de RLS — app_settings
+
+Em 29/10/2026, captura do Lovable Cloud mostrou que a tabela `app_settings` está com **RLS enabled** e apresenta **duas políticas**:
+- `admin read settings` — comando `SELECT`, aplicada a `authenticated`.
+- `admin update settings` — comando `UPDATE`, aplicada a `authenticated`.
+
+**Status: verificação parcial.** As condições `USING` e `WITH CHECK` ainda não aparecem na captura porque os detalhes das políticas estão recolhidos. Não é possível concluir apenas pelo nome que há checagem efetiva da role `admin`; é preciso expandir as políticas e confirmar a expressão. O SQL versionado no repositório prevê `public.has_role(auth.uid(), 'admin')`, mas isso ainda precisa ser comparado com a configuração realmente implantada. Também serão necessários testes reais de acesso sem autorização.
+
+**Próxima evidência solicitada:** expansão das duas políticas no Lovable, sem alterar configurações, seguida de inspeção de RLS da tabela `leads`.
