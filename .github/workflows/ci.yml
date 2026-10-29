@@ -37,8 +37,9 @@ jobs:
       - name: Rodar testes unitarios
         run: bun run test
 
+      # Vite/TanStack Router regenerates src/routeTree.gen.ts during build.
+      - name: Compilar aplicacao e gerar arvore de rotas
+        run: bun run build
+
       - name: Verificar tipos TypeScript
         run: bunx tsc --noEmit
-
-      - name: Compilar aplicacao
-        run: bun run build

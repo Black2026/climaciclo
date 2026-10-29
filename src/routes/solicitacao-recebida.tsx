@@ -9,8 +9,8 @@ import { readConfirmation } from "@/lib/confirmation-store";
 
 export const Route = createFileRoute("/solicitacao-recebida")({
   validateSearch: (search: Record<string, unknown>) => ({
-    codigo: typeof search.codigo === "string" && /^CC-[A-Z0-9]{6}$/.test(search.codigo)
-      ? search.codigo : "",
+    codigo: typeof search["codigo"] === "string" && /^CC-[A-Z0-9]{6}$/.test(search["codigo"])
+      ? search["codigo"] : "",
   }),
   head: () => ({
     meta: [
