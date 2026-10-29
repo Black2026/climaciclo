@@ -6,7 +6,7 @@ Testes previstos e observações reais. Nunca rotular como aprovado algo ainda n
 |---|---|---|---|
 | G1-001 | CTA "Montar meu acompanhamento" | Abrir `/montar-plano` sem erro | **Reteste aprovado: Etapa 1 exibida; antes 404** |
 | G1-002 | Etapas do formulário | Avançar/voltar preservando campos | **Aprovado no teste manual:** etapas 1→2→3 e retorno preservando dados confirmados pelo usuário; resumo exibido |
-| G1-003 | Responsividade | 320, 375, 390, 768 e 1280 px sem overflow | **Parcial:** captura mobile mostra formulário, erro e botões acessíveis; ainda não foram conferidas todas as larguras |
+| G1-003 | Responsividade | 320, 375, 390, 768 e 1280 px sem overflow | **Aprovado conforme teste manual relatado pelo participante nas cinco larguras** |
 | G1-004 | Consentimento desmarcado | Bloquear revisão e envio; envio real indisponível no G1 | **Aprovado em teste visual:** consentimento desmarcado apresenta erro "É preciso aceitar para enviar"; envio real aparece desativado |
 | G2-001 | Submeter lead válido | Persistir `status=novo` e código | Pendente |
 | G2-002 | Envio repetido | Uma única linha para uma chave | Pendente |
