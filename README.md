@@ -96,7 +96,7 @@ Documentos correspondentes:
 - [Prompts de revisão e correção, com status](docs/18-prompts-revisoes-e-correcoes.md)
 - [Gates e critérios de aceite](docs/13-gates-e-checklist.md)
 
-**Ocorrência e reteste real:** em 29/10/2026, clicar no CTA *Montar meu acompanhamento* apresentou **404 — Página não encontrada**. A inspeção do código confirmou a ausência da rota `/montar-plano`. Após criá-la no GitHub, uma nova captura mostrou a **Etapa 1 do configurador carregada, sem 404**. Uma segunda rodada com capturas confirmou o avanço **da Etapa 1 para a Etapa 2**, com ambos os formulários preenchidos. Retorno preservando dados, Etapa 3, validações negativas e responsividade **ainda não foram concluídos**. Ver [registro do G1](docs/16-teste-g1-404.md).
+**Ocorrência e reteste real:** em 29/10/2026, clicar no CTA *Montar meu acompanhamento* apresentou **404 — Página não encontrada**. A inspeção do código confirmou a ausência da rota `/montar-plano`. Após criá-la no GitHub, uma nova captura mostrou a **Etapa 1 do configurador carregada, sem 404**. Uma segunda rodada com capturas confirmou o avanço **da Etapa 1 para a Etapa 2**, com ambos os formulários preenchidos. Um novo teste confirmou, segundo o usuário, retorno com dados preservados e avanço até a **Etapa 3**, com resumo de demonstração e mensagem de nenhum envio/armazenamento. Verificação de consentimento **desmarcado**, validações negativas e responsividade **ainda não foram concluídas**. Ver [registro do G1](docs/16-teste-g1-404.md).
 
 ## 8. Status verdadeiro de execução e testes
 
@@ -104,7 +104,7 @@ Documentos correspondentes:
 |---|---|---|
 | Dor, modelo de negócio, mercado e Canvas | **Planejados** | Documentos `docs/00`–`docs/03` |
 | Prompt inicial, Plan e revisão SDD | **Concluídos** | `docs/04`, `docs/11`, `docs/12`, `docs/15` |
-| **G1 — Landing e formulário** | **Parcial / rota corrigida** | Landing, etapa 1 e avanço para etapa 2 confirmados; faltam retorno, etapa 3, validações e mobile |
+| **G1 — Landing e formulário** | **Parcial / rota corrigida** | Landing, etapas 1–3 e retorno preservando dados confirmados; faltam consentimento desmarcado, validações negativas e mobile |
 | G2 — Lovable Cloud e leads persistentes | **Não comprovado** | Envio real + consulta ao banco + teste de retry |
 | G3 — Login administrativo e RLS | **Não comprovado** | Sessão, role, tentativas anônimas, APIs |
 | G4 — Clientes, atendimentos, lembretes | **Não comprovado** | CRUD real e persistência após F5 |

@@ -13,7 +13,9 @@
 
 10. Teste visual G1-002 em andamento: duas novas capturas mostram Etapa 1 preenchida (residencial, dois Split) e Etapa 2 aberta/preenchida (Recife, Boa Viagem, acompanhamento semestral e limpeza). O avanço entre as etapas foi observado sem erro. Volta preservando campos, Etapa 3, consentimento e mobile ainda não testados. Capturas compartilhadas no chat, pendentes de upload para `evidencias/`.
 
+11. Reteste G1-002: o usuário confirmou que o retorno preserva os dados entre etapas, e a Etapa 3 foi aberta e revisada. Captura do resumo mostra consentimento marcado e mensagem **«Nenhuma solicitação foi enviada ou armazenada»**; nenhum backend ou gravação foi comprovado. Necessário verificar consentimento desmarcado e responsividade. Captura compartilhada na conversa, ainda não adicionada a `evidencias/`.
+
 ## Pendências
-Concluir o reteste G1 (a rota 404 já foi corrigida e Etapas 1→2 visualizadas), implementar e validar G2–G5, configurar privacidade e administrador, revisar segurança, publicar URL e tornar repositório público para entrega na DIO.
+Concluir o G1 (a rota 404 está corrigida, Etapas 1→2→3 e retorno preservando dados foram validados; falta consentimento desmarcado e responsividade), implementar e validar G2–G5, configurar privacidade e administrador, revisar segurança, publicar URL e tornar repositório público para entrega na DIO.
 
 **Não foi comprovada** validação comercial com clientes reais, persistência Cloud, autenticação funcional, cadastro de atendimentos ou publicação.
