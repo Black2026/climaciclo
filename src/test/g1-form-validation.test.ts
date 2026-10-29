@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { step1Schema, step2Schema, step3Schema } from "@/lib/lead-schema";
+import { step1Schema, step2Schema, step3Schema, leadSchema } from "@/lib/lead-schema";
 
 describe("Gate G1 — validação de formulário", () => {
   it("rejeita primeira etapa sem tipo de ambiente", () => {
@@ -21,5 +21,27 @@ describe("Gate G1 — validação de formulário", () => {
   });
   it("rejeita telefone sem DDD", () => {
     expect(step3Schema.safeParse({ name: "Cliente de teste", whatsapp: "12345", email: "", consent: true }).success).toBe(false);
+  });
+  it("preserva mensagem de consentimento na migração Zod 4", () => {
+    const result = step3Schema.safeParse({
+      name: "Cliente de teste", whatsapp: "(11) 91234-5678", email: "", consent: false,
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error.issues[0]?.message).toBe("É preciso aceitar para enviar");
+  });
+  it("rejeita entradas grandes e interesses acima do máximo", () => {
+    const result = step2Schema.safeParse({
+      city: "Recife", neighborhood: "Boa Viagem", follow_up_pref: "anual",
+      interests: Array(25).fill("limpeza"),
+    });
+    expect(result.success).toBe(false);
+  });
+  it("validacao completa rejeita payload com UUID invalido", () => {
+    expect(leadSchema.safeParse({
+      environment_type: "residencial", unit_count: "2", unit_type: "split",
+      city: "Recife", neighborhood: "Boa Viagem", follow_up_pref: "anual",
+      interests: ["limpeza"], name: "Cliente de teste", whatsapp: "(11) 91234-5678",
+      email: "", consent: true, idempotency_key: "nao-e-uuid",
+    }).success).toBe(false);
   });
 });
