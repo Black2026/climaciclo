@@ -141,3 +141,15 @@ Foi executado no SQL Editor um ensaio de `public.submit_lead` com **dados fictí
 **Resultado: aprovado para o cenário de recusa pela trava de privacidade.** A função foi invocada e respondeu com o bloqueio esperado enquanto `app_settings.ready_for_real_data=false`. A captura de resultados isoladamente não verifica o bloco completo da transação; o procedimento executado foi o enviado anteriormente na conversa.
 
 **Limites:** a captura não comprova que o banco continua sem linhas novas; por isso recomenda-se conferir contagens em `leads` e `lead_rate_limits` sem consultar informações pessoais. O comportamento de persistência quando habilitado, idempotência e rate limit ainda não foram testados. Não liberar envio real do formulário nem mudar `ready_for_real_data` nesta fase.
+
+## Verificação pós-teste da integridade do banco — 29/10/2026
+
+Após a chamada controlada de `submit_lead` retornar `created=false`, `error=not_ready` e `public_code=NULL`, o participante executou uma nova consulta `SELECT` no Lovable Cloud. A captura mostrou:
+
+| Campo | Resultado |
+|---|---|
+| `ready_for_real_data` | `false` |
+| `total_leads` | `0` |
+| `total_rate_limits` | `0` |
+
+**Conclusão:** no momento da consulta, não havia registros nas tabelas de leads e rate limits e a configuração de bloqueio permanecia inalterada. O cenário **G2-004 de recusa por privacidade foi aprovado** em chamada direta à função SQL. O teste não valida o fluxo ponta a ponta da interface, nem persistência quando a trava é liberada. Mantemos a coleta real desativada. A imagem de resultado ainda precisa ser incorporada às evidências do repositório.
