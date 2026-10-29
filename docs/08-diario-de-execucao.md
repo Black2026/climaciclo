@@ -15,7 +15,9 @@
 
 11. Reteste G1-002: o usuário confirmou que o retorno preserva os dados entre etapas, e a Etapa 3 foi aberta e revisada. Captura do resumo mostra consentimento marcado e mensagem **«Nenhuma solicitação foi enviada ou armazenada»**; nenhum backend ou gravação foi comprovado. Necessário verificar consentimento desmarcado e responsividade. Captura compartilhada na conversa, ainda não adicionada a `evidencias/`.
 
+12. Teste G1-004 e amostra mobile: captura enviada mostra checkbox de consentimento desmarcado, mensagem de validação "É preciso aceitar para enviar", botões de revisão/voltar visíveis e envio real desativado. A experiência móvel funciona no trecho exibido, mas ainda faltam verificações de responsividade completa em 320/375/390/768/1280 px. Captura do reteste foi apresentada no chat; upload ao repositório continua pendente.
+
 ## Pendências
-Concluir o G1 (a rota 404 está corrigida, Etapas 1→2→3 e retorno preservando dados foram validados; falta consentimento desmarcado e responsividade), implementar e validar G2–G5, configurar privacidade e administrador, revisar segurança, publicar URL e tornar repositório público para entrega na DIO.
+Concluir o G1 (a rota 404 está corrigida, Etapas 1→2→3 e retorno preservando dados foram validados; o consentimento desmarcado foi validado; falta validar todas as larguras previstas de responsividade), implementar e validar G2–G5, configurar privacidade e administrador, revisar segurança, publicar URL e tornar repositório público para entrega na DIO.
 
 **Não foi comprovada** validação comercial com clientes reais, persistência Cloud, autenticação funcional, cadastro de atendimentos ou publicação.
