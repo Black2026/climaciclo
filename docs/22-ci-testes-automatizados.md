@@ -13,8 +13,8 @@ O job usa:
 2. `oven-sh/setup-bun@v2` (Bun);
 3. `bun install --frozen-lockfile` (usa `bun.lock`);
 4. `bun run test` (Vitest);
-5. `bunx tsc --noEmit` (TypeScript);
-6. `bun run build` (Vite/TanStack Start).
+5. `bun run build` (Vite/TanStack Start; gera a árvore de rotas);
+6. `bunx tsc --noEmit` (TypeScript, após geração das rotas).
 
 ## Proteções
 - Permissões GitHub Actions somente `contents: read`.
@@ -34,3 +34,15 @@ No GitHub: **Actions → CI - testes e build → execução mais recente**. Se G
 
 ## Pendências de G2 não cobertas pelo CI
 Persistência positiva no Cloud, idempotência concorrente, RLS com contas não autorizadas, retries e falhas de rede continuam pendentes de ambiente isolado. O pipeline não homologará esses cenários.
+
+## Homologação da CI — execução real em 29/10/2026
+
+**Resultado confirmado pelo GitHub Actions:** [Run #40963214831](https://github.com/Black2026/climaciclo/actions/runs/40963214831), commit `c466e67cd56a9887593d7e7f723e40f56ca15ba4`, estado `completed`, conclusão `success`. Os passos de instalação do Bun, dependências, testes unitários, compilação e checagem de TypeScript foram todos concluídos com `success`. A captura fornecida pelo participante mostra **3 arquivos e 14 testes aprovados**.
+
+### Histórico honesto de correções
+1. A execução #40962890170 passou nos testes unitários e falhou em TypeScript por árvore de rotas gerada desatualizada e campos opcionais no Supabase.
+2. A execução #40963071743 passou nos testes e compilação, mas TypeScript identificou ausência da rota `/admin/login`.
+3. O commit `c466e67` adicionou um **placeholder sem acesso administrativo** para essa rota, preservando o Gate G3 como pendente.
+4. A execução #40963214831 passou completamente, comprovando o critério de aceite desta fase da CI.
+
+**Observação:** validação do pipeline não implica teste end-to-end da persistência, proteção de todas as rotas administrativas, publicação do MVP ou liberação para dados reais. `ready_for_real_data=false` permanece como último estado verificado no Cloud.
