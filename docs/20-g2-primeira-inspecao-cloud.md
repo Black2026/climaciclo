@@ -23,3 +23,8 @@ Abra o projeto ClimaCiclo no Lovable, vá ao painel Cloud/Database e confirme a 
 - Revisão de segurança antes de habilitar dados reais.
 
 O Gate G1 foi homologado por relatos de testes manuais nas larguras 320, 375, 390, 768 e 1280 px. As capturas completas dessas larguras ainda não foram incluídas no repositório.
+
+## Inspeção visual do Cloud — 29/10/2026
+Captura fornecida pelo participante na tela **Mais → Database** do Lovable. Foram observadas sete tabelas: `admin_roles` (0 linhas), `app_settings` (1), `customers` (0), `lead_rate_limits` (0), `leads` (0), `reminders` (0), `service_orders` (0).
+
+**Resultado:** a presença das tabelas no banco foi confirmada visualmente. Isto não comprova ainda que a RPC `submit_lead`, suas permissões ou políticas RLS estejam corretas, nem a persistência de um novo lead. Próximo teste: inspecionar apenas os campos não sensíveis da configuração, principalmente o estado de `ready_for_real_data`, sem modificar valores ou coletar dados reais. A captura desta inspeção ainda precisa ser adicionada à pasta `evidencias/`.
