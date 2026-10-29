@@ -98,6 +98,10 @@ Documentos correspondentes:
 
 **Ocorrência e reteste real:** em 29/10/2026, clicar no CTA *Montar meu acompanhamento* apresentou **404 — Página não encontrada**. A inspeção do código confirmou a ausência da rota `/montar-plano`. Após criá-la no GitHub, uma nova captura mostrou a **Etapa 1 do configurador carregada, sem 404**. Uma segunda rodada com capturas confirmou o avanço **da Etapa 1 para a Etapa 2**, com ambos os formulários preenchidos. Um novo teste confirmou, segundo o usuário, retorno com dados preservados e avanço até a **Etapa 3**, com resumo de demonstração e mensagem de nenhum envio/armazenamento. **Consentimento desmarcado foi validado em tela mobile**, exibindo "É preciso aceitar para enviar"; o botão de envio real permanece desativado. O participante declarou também ter concluído a responsividade em 320, 375, 390, 768 e 1280 px. A integração posterior do Gate G2 preservou a demonstração e o botão de envio desativado. Ver [registro do G1](docs/16-teste-g1-404.md).
 
+### Integração contínua — CI validada (29/10/2026)
+
+A integração contínua utiliza GitHub Actions, Bun, Vitest, Vite e TypeScript. O [run #40963214831](https://github.com/Black2026/climaciclo/actions/runs/40963214831) foi concluído com **success**, 14/14 testes aprovados em 3 arquivos e build/checagem de tipos concluídos. Ver [documentação da CI](docs/22-ci-testes-automatizados.md). Isso não substitui os testes reais de persistência e segurança do G2.
+
 ## 8. Status verdadeiro de execução e testes
 
 | Etapa | Situação em 29/10/2026 | Evidência / próxima condição |
