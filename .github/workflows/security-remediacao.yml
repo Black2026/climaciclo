@@ -32,12 +32,13 @@ jobs:
         run: bunx tsc --noEmit
       - name: Validar lockfile reproduzivel
         run: bun install --frozen-lockfile
-      - name: Mostrar diferenca de lockfile gerada para revisao
+      - name: Conferir lockfile versionado (sem atualizacao silenciosa)
         run: |
-          git diff --stat -- bun.lock
-          git diff -- bun.lock > lockfile-diff.patch
-          if git diff --quiet -- bun.lock; then
-            echo "Lockfile ja sincronizado"
-          else
-            echo "::notice::Lockfile precisa ser commitado apos regeneracao; CI nao e homologacao completa."
+          echo "G2_LOCK_DIFF_BEGIN"
+          git --no-pager diff --no-ext-diff -- bun.lock
+          echo "G2_LOCK_DIFF_END"
+          if ! git diff --quiet -- bun.lock; then
+            echo "::error::bun.lock em Git diverge do resolvido pelo Bun. Commitar arquivo regenerado antes do merge."
+            exit 1
           fi
+          echo "Lockfile salvo no Git coincide com a resolucao efetiva."
