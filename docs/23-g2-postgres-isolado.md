@@ -31,3 +31,9 @@ O Pull Request [#1](https://github.com/Black2026/climaciclo/pull/1) acionou as d
 - [CI geral, run #40964572878](https://github.com/Black2026/climaciclo/actions/runs/40964572878): `completed / success`.
 
 **Conclusão:** suíte de banco descartável homologada nos cenários implementados. A idempotência testada é **sequencial**, não concorrente; não houve conexão com o Lovable Cloud, ativação real de cadastro ou teste de HTTP. O G2 completo continua aberto.
+
+## Falha de concorrência e decisão de escopo — 29/10/2026
+
+O teste adicional [GitHub Actions #40965226622](https://github.com/Black2026/climaciclo/actions/runs/40965226622) falhou em `scripts/g2/concorrencia.sh`: duas chamadas simultâneas retornaram o mesmo código, uma criou o lead e a outra foi deduplicada, mas `lead_rate_limits` registrou cota 2 para um único lead. O erro foi registrado no [Issue #2](https://github.com/Black2026/climaciclo/issues/2) como pendência técnica posterior; **não afirmar aprovação da idempotência concorrente**.
+
+Para a entrega mínima DIO, este cenário extra não precisa bloquear a validação de landing, formulário e gestão manual, mas o MVP completo não está pronto para entrega conforme enunciado enquanto faltar coleta funcional, painel administrativo, URL pública e repositório público. O PR #1 permanece em rascunho; não mesclar a suíte com falha como se estivesse totalmente aprovada.
