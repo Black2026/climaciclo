@@ -106,3 +106,14 @@ A consulta ao catálogo PostgreSQL com `pg_get_functiondef` e expressões `ILIKE
 **Evidência:** captura da tela SQL Editor enviada pelo participante, ainda não anexada ao repositório. A verificação apenas confirma que o texto implantado contém esses trechos; não comprova a sequência de execução nem o comportamento em falhas, duplicidades ou acessos sem autorização.
 
 **Próxima verificação funcional:** testar a recusa `not_ready` enquanto `app_settings.ready_for_real_data=false`, com dados fictícios e transação de somente leitura/rollback; nenhuma liberação de captura de leads reais está autorizada nesta etapa.
+
+
+## Confirmação da trava de configuração (SELECT) — 29/10/2026
+
+O participante executou uma consulta somente leitura a `public.app_settings` para o registro `id=1`. O Lovable Cloud retornou `ready_for_real_data=false` e o texto calculado `BLOQUEIO CONFIGURADO`.
+
+**Resultado:** estado de configuração confirmado. O texto `BLOQUEIO CONFIGURADO` é produzido pelo `CASE` da própria consulta e não comprova, por si, que a função `submit_lead` recusa solicitações. O Gate G2 continua aberto.
+
+**Próximo ensaio proposto:** invocar `submit_lead` somente com valores fictícios dentro de transação `READ ONLY`, encerrada por `ROLLBACK`. Espera-se `public_code=null`, `created=false`, `error=not_ready`. O teste deverá ser interrompido se a interface não oferecer execução confiável do bloco ou ocorrer erro. Não alterar `ready_for_real_data` nem enviar dados reais.
+
+A captura desta verificação está na conversa e ainda precisa ser incorporada a `evidencias/` se for usada no portfólio.
