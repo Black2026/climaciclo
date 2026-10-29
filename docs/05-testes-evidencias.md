@@ -29,3 +29,5 @@ Evidências registradas no GitHub: prévia da landing, erro 404 original e sincr
 **Teste G2-004 — 29/10/2026:** captura do SQL Editor confirmou `not_ready` na chamada direta da função com dados fictícios. Não constitui aprovação dos demais cenários G2. Evidência gráfica ainda deve ser anexada a `evidencias/`.
 
 **Teste G2-UI-001 — 29/10/2026:** quatro capturas da prévia confirmam que a integração preservou a revisão da Etapa 3, rejeita a falta de consentimento e mantém o envio real visualmente desativado com aviso explícito do Gate G2. **Aprovado para UI, não para backend.** Falta testar a rota de confirmação direta e os cenários de persistência. As capturas foram recebidas na conversa e ainda aguardam publicação na pasta `evidencias/`.
+
+**G2-CONF-002 — 29/10/2026:** clique em "Copiar código e resumo" alterou o rótulo para "Copiado" e resultou em `CC-ABC123` no Bloco de Notas, sem dados pessoais. **Aprovado para a rota sem confirmação real.** Compilação automatizada, envio positivo, idempotência e segurança integral do backend seguem pendentes.
