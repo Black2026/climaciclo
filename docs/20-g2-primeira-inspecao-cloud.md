@@ -68,3 +68,21 @@ Captura da interface **Database → leads → RLS policies** confirma que a tabe
 **Limite da evidência:** as condições das regras ainda não estão expandidas, portanto a captura não comprova que cada uma verifica `has_role(auth.uid(), 'admin'::app_role)`. A ausência de política `anon` na lista é coerente com o desenho do projeto, mas os privilégios, a RLS, os caminhos de Server Function e testes reais de acesso precisam ser conferidos antes da homologação de segurança.
 
 **Próximo teste:** expandir as quatro políticas e documentar `USING`/`WITH CHECK` sem editar nenhuma regra. A captura enviada na conversa ainda requer inclusão em `evidencias/` caso seja usada no portfólio.
+
+
+## Auditoria detalhada de RLS em leads — 29/10/2026
+
+O participante apresentou captura com **todas as quatro políticas de `leads` expandidas**, RLS habilitado e papel `authenticated`. As expressões mostradas foram:
+
+| Política | Operação | Expressão visualizada |
+|---|---|---|
+| `admin select leads` | SELECT (USING) | `has_role(auth.uid(), 'admin'::app_role)` |
+| `admin insert leads` | INSERT (WITH CHECK) | `has_role(auth.uid(), 'admin'::app_role)` |
+| `admin update leads` | UPDATE (USING) | `has_role(auth.uid(), 'admin'::app_role)` |
+| `admin delete leads` | DELETE (USING) | `has_role(auth.uid(), 'admin'::app_role)` |
+
+**Resultado parcial aprovado:** as expressões apresentadas estão alinhadas ao projeto e restringem as operações diretas da tabela a usuários autenticados com role administrativa. A interface não mostra um `WITH CHECK` separado na política UPDATE; se não houver cláusula explícita, o PostgreSQL aplica a expressão USING também à nova linha, conforme sua documentação. O arquivo SQL versionado define WITH CHECK explicitamente.
+
+**Ainda pendente:** testes reais de acesso por usuário anônimo e autenticado sem role, checagem de GRANTs, verificação da função `submit_lead` e de sua restrição ao serviço, teste de persistência/idempotência/rate limit e revisão de vazamentos de dados pessoais. A presença de RLS não impede, por si só, bypass através de credenciais privilegiadas no servidor; essas credenciais e seus handlers também precisam de auditoria.
+
+**Próximo passo:** inspecionar a existência e permissões de `submit_lead` no ambiente Lovable Cloud sem executar SQL mutável nem inserir dados reais. A captura deve ser adicionada a `evidencias/` após remoção de quaisquer informações sensíveis.
