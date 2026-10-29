@@ -86,3 +86,9 @@ O participante apresentou captura com **todas as quatro políticas de `leads` ex
 **Ainda pendente:** testes reais de acesso por usuário anônimo e autenticado sem role, checagem de GRANTs, verificação da função `submit_lead` e de sua restrição ao serviço, teste de persistência/idempotência/rate limit e revisão de vazamentos de dados pessoais. A presença de RLS não impede, por si só, bypass através de credenciais privilegiadas no servidor; essas credenciais e seus handlers também precisam de auditoria.
 
 **Próximo passo:** inspecionar a existência e permissões de `submit_lead` no ambiente Lovable Cloud sem executar SQL mutável nem inserir dados reais. A captura deve ser adicionada a `evidencias/` após remoção de quaisquer informações sensíveis.
+
+## Inspeção SQL da função submit_lead
+
+Em 29/10/2026, consulta somente leitura ao catálogo PostgreSQL via SQL Editor do Lovable Cloud apresentou uma linha para a função `public.submit_lead` com `SECURITY DEFINER`. Permissões efetivas retornadas: `anon_can_execute=false`, `authenticated_can_execute=false`, `service_role_can_execute=true`. **Resultado da configuração de execução: aprovado.**
+
+A consulta não executou a função nem comprovou ausência de efeitos colaterais, comportamento de privacidade, idempotência, rate limit ou persistência. **Gate G2 permanece pendente** até os testes. Próxima checagem: inspecionar definição da função por consulta de leitura, sem executá-la ou alterar `ready_for_real_data`.
