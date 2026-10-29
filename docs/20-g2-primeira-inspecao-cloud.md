@@ -92,3 +92,9 @@ O participante apresentou captura com **todas as quatro políticas de `leads` ex
 Em 29/10/2026, consulta somente leitura ao catálogo PostgreSQL via SQL Editor do Lovable Cloud apresentou uma linha para a função `public.submit_lead` com `SECURITY DEFINER`. Permissões efetivas retornadas: `anon_can_execute=false`, `authenticated_can_execute=false`, `service_role_can_execute=true`. **Resultado da configuração de execução: aprovado.**
 
 A consulta não executou a função nem comprovou ausência de efeitos colaterais, comportamento de privacidade, idempotência, rate limit ou persistência. **Gate G2 permanece pendente** até os testes. Próxima checagem: inspecionar definição da função por consulta de leitura, sem executá-la ou alterar `ready_for_real_data`.
+
+## Consulta da definição SQL — resultado abreviado
+
+Em 29/10/2026, foi executada consulta somente leitura com `pg_get_functiondef` para a função `public.submit_lead`. O Lovable Cloud retornou uma linha e o começo de `CREATE OR REPLACE FUNCTION public.submit_lead(...`, confirmando que a definição SQL é recuperável. **A interface truncou a exibição; o corpo da função ainda não foi inspecionado nem comparado integralmente.**
+
+Próximo teste: consulta somente leitura com indicadores de presença de verificações de consentimento, privacidade, idempotência e rate limit. Esses indicadores textuais não provam o comportamento da implementação; a homologação dependerá de testes de execução em ambiente controlado.
