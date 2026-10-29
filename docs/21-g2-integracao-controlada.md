@@ -57,3 +57,11 @@ O participante abriu a prévia externa do Lovable diretamente em `/solicitacao-r
 2. Testar o botão de copiar o código, sem dados reais.
 3. Preparar ambiente isolado de testes para **persistência positiva, idempotência, retries e rate limit**. Não alterar `ready_for_real_data=false` no projeto atual nem remover travas de liberação para testar na produção.
 4. Somente após privacidade completa e segurança revisada, planejar abertura controlada ao público.
+
+## G2-CONF-002 — Copiar código de referência (29/10/2026)
+
+O participante clicou no botão **“Copiar código e resumo”** na rota de confirmação acessada com o código fictício `CC-ABC123`. A primeira captura mostra o botão com rótulo **“Copiado”**. Na segunda captura, o Bloco de Notas contém exatamente `CC-ABC123`, sem nome, telefone, e-mail ou dados do formulário.
+
+**Resultado: aprovado para o cenário sem resumo em memória após recarga.** A cópia do código funciona na prévia externa do Lovable. Isso não verifica cópia de resumo após gravação efetiva de uma solicitação, nem persistência de leads no banco. Duas capturas foram fornecidas na conversa, mas ainda precisam ser adicionadas à pasta `evidencias/`.
+
+**Próximos testes:** executar `npm run test` e `npm run build` no repositório (ou pipeline de CI) e preparar ambiente isolado para persistência/idempotência, sem alterar o bloqueio atual `ready_for_real_data=false`.
