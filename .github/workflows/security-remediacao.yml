@@ -1,0 +1,43 @@
+name: Security - validar remediacao
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      CLIMACICLO_ENABLE_LEAD_SUBMISSION: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Resolver dependencias e verificar novas versoes
+        run: |
+          bun install
+          bun pm ls | grep -E 'js-yaml|seroval|source-map-js|zod' || true
+      - name: Testes
+        run: bun run test
+      - name: Compilacao e rotas geradas
+        run: bun run build
+      - name: TypeScript
+        run: bunx tsc --noEmit
+      - name: Validar lockfile reproduzivel
+        run: bun install --frozen-lockfile
+      - name: Mostrar diferenca de lockfile gerada para revisao
+        run: |
+          git diff --stat -- bun.lock
+          git diff -- bun.lock > lockfile-diff.patch
+          if git diff --quiet -- bun.lock; then
+            echo "Lockfile ja sincronizado"
+          else
+            echo "::notice::Lockfile precisa ser commitado apos regeneracao; CI nao e homologacao completa."
+          fi
