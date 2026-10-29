@@ -49,3 +49,5 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f drizzle/migrations/0000_migration.sql
       - name: Executar testes reais em transacao temporaria
         run: psql -X -v ON_ERROR_STOP=1 -f scripts/g2/assert.sql
+      - name: Testar duas chamadas concorrentes com a mesma chave
+        run: bash scripts/g2/concorrencia.sh
