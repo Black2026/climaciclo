@@ -44,3 +44,14 @@ Em 29/10/2026, captura do Lovable Cloud mostrou que a tabela `app_settings` est�
 **Status: verificação parcial.** As condições `USING` e `WITH CHECK` ainda não aparecem na captura porque os detalhes das políticas estão recolhidos. Não é possível concluir apenas pelo nome que há checagem efetiva da role `admin`; é preciso expandir as políticas e confirmar a expressão. O SQL versionado no repositório prevê `public.has_role(auth.uid(), 'admin')`, mas isso ainda precisa ser comparado com a configuração realmente implantada. Também serão necessários testes reais de acesso sem autorização.
 
 **Próxima evidência solicitada:** expansão das duas políticas no Lovable, sem alterar configurações, seguida de inspeção de RLS da tabela `leads`.
+
+
+## Expansão das políticas RLS de app_settings — 29/10/2026
+
+Nova captura de tela do participante confirma a expressão **`USING has_role(auth.uid(), 'admin'::app_role)`** em ambas as políticas existentes:
+- `admin read settings`: `SELECT`, papel `authenticated`, expressão `USING` restringindo a role `admin`.
+- `admin update settings`: `UPDATE`, papel `authenticated`, expressão `USING` restringindo a role `admin`.
+
+**Resultado:** checagem de administrador na cláusula `USING` **confirmada visualmente** para leitura e atualização. A captura **não exibe `WITH CHECK`**, de modo que essa cláusula não foi validada separadamente pela interface. A migração SQL do repositório prevê `WITH CHECK` para `UPDATE`, mas é necessário verificar os detalhes no banco se houver divergência. O teste prático de acesso por usuário sem privilégios **continua pendente**. Não declarar segurança totalmente homologada.
+
+**Próximo passo:** inspecionar a RLS da tabela `leads`, especialmente as políticas `SELECT`, `INSERT`, `UPDATE` e `DELETE`, confirmando quais roles estão autorizadas e se há uma cláusula `has_role` restritiva. Não editar políticas nem criar leads reais neste momento.
