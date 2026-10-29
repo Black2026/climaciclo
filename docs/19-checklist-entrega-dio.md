@@ -6,7 +6,7 @@
 - [x] Tese e operação manual descritas
 - [x] Mega prompt, plano e revisão técnica documentados
 - [x] GitHub conectado ao projeto Lovable, branch `main`
-- [ ] Corrigir 404 do CTA e validar configurador G1
+- [x] Corrigir 404 do CTA e validar configurador G1 (homologado manualmente em 29/10/2026)
 - [ ] Persistir leads e comprovar G2
 - [ ] Validar login, autenticação, role e RLS G3
 - [ ] Validar gestão de clientes, ordens e lembretes G4
