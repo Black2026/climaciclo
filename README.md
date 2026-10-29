@@ -123,12 +123,12 @@ O Lovable exibiu uma mensagem de falta de créditos, interrompendo o desenvolvim
 | [Erro 404 após clicar no CTA](evidencias/g1-001-erro-404.png) | Falha real no teste G1-001; não corrigida |
 | [Conexão Lovable → GitHub](evidencias/git-001-lovable-github-sync.png) | `Black2026/climaciclo`, `main`, `Connected` e `In sync with GitHub` |
 
-Novas imagens serão adicionadas **somente após testes reais**, sem dados pessoais. Inventário: [evidências](evidencias/README.md) e [roteiro de testes](docs/05-testes-evidencias.md).
+**Atenção:** os três arquivos PNG das capturas ainda não foram enviados ao GitHub; os links acima estarão indisponíveis até o upload. As capturas originais existem no pacote documental local. Novas imagens só serão adicionadas **após testes reais**, sem dados pessoais. Inventário: [evidências](evidencias/README.md) e [roteiro de testes](docs/05-testes-evidencias.md).
 
 ## 9. Próximas etapas
 
 1. **Concluído:** conectar o projeto Lovable à conta GitHub `Black2026`: repositório `climaciclo` na branch `main`, com mensagem `In sync with GitHub` no editor.
-2. **Pendente:** adicionar este `README.md` e as pastas `docs/` e `evidencias/` ao repositório **já sincronizado**, preservando integralmente o código que o Lovable gerou. Antes, conferir a árvore de arquivos diretamente no GitHub.
+2. **Concluído parcialmente:** atualizar `README.md`, adicionar os 20 arquivos `docs/` e `evidencias/README.md`, preservando o código existente. **Pendente:** enviar as três capturas originais PNG para `evidencias/`.
 3. Corrigir e retestar o erro 404 do CTA; validar integralmente G1.
 4. Concluir G2–G5 e documentar evidências reais e configurações de segurança.
 5. Publicar e testar a URL pública, conferir ausência de credenciais no Git, tornar o repositório público e entregar o **link do repositório** na DIO.
