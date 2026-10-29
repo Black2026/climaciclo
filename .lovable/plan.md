@@ -1,108 +1,115 @@
-# ClimaCiclo — Plano do MVP
+# ClimaCiclo — Plano do MVP (revisão 2)
 
-"Seu ar em dia. Sua rotina mais leve." Site em português, pensado primeiro para celular, para testar a demanda por manutenção preventiva de ar-condicionado com orçamento feito à mão pelo WhatsApp. Nada de profissionais, preços, depoimentos, números ou contadores inventados.
+"Seu ar em dia. Sua rotina mais leve." Site em português, pensado primeiro para celular, para testar a demanda por manutenção preventiva de ar-condicionado com orçamento feito à mão pelo WhatsApp. Nada de profissionais, preços, depoimentos, números ou contadores inventados. Ficam fora: Stripe, Resend, n8n, chatbot e IA.
 
-## 1. Arquitetura e rotas
+## Mudanças desta revisão
 
-Stack: TanStack Start (React 19, SSR) + Lovable Cloud (autenticação, banco, RLS). A lógica de servidor usa server functions (`createServerFn`), não Edge Functions. Esse é o padrão desta stack e cumpre a exigência de ter um "endpoint com validação no servidor".
+1. A view `public_contact` saiu. No lugar dela entra a server function GET pública `getPublicContact`, que só devolve o contato.
+2. Toda server function de admin passa a validar a sessão e a role `admin` no servidor. A proteção visual das rotas não conta como segurança. O CSRF continua ativo.
+3. `submitLead`: o consentimento é validado de forma explícita, a chave de idempotência fica estável entre tentativas, a deduplicação é atômica no banco e o sucesso só é declarado depois da gravação.
+4. A conversão de lead em cliente vira uma função SQL transacional e idempotente.
+5. O procedimento do primeiro admin foi conferido com a interface atual do Cloud. A privacidade ganha campos reais e uma trava de "pronto para dados reais".
+6. Entram novos testes: autorização, envio duplicado, falha de rede, conversão e privacidade.
+
+## 1. Arquitetura e rotas (sem mudanças)
+
+TanStack Start (SSR) + Lovable Cloud. A lógica de servidor usa `createServerFn`, sem Edge Functions.
 
 ```text
 src/routes/
-  index.tsx                  /  landing (proposta, 3 passos, FAQ, CTA)
-  montar-plano.tsx           /montar-plano  configurador em 3 etapas
-  solicitacao-recebida.tsx   /solicitacao-recebida  confirmação
-  privacidade.tsx            /privacidade
-  admin.login.tsx            /admin/login  (público)
-  _authenticated/route.tsx   proteção (gerenciada pela integração)
-  _authenticated/admin.tsx            layout admin + verificação de role
-  _authenticated/admin.index.tsx      /admin  painel (contagens reais)
-  _authenticated/admin.leads.tsx      /admin/leads (+ $id)
-  _authenticated/admin.clientes.tsx   /admin/clientes (+ $id)
-  _authenticated/admin.atendimentos.tsx
-  _authenticated/admin.lembretes.tsx
-  _authenticated/admin.configuracoes.tsx
-src/components/brand/   Logo (SVG ciclo/brisa), Wordmark
-src/components/plan/    StepAmbiente, StepLocal, StepContato, Resumo, Stepper
-src/components/admin/   AdminShell, LeadTable, StatusBadge, forms
-src/lib/lead-schema.ts  schema zod compartilhado entre cliente e servidor
-src/lib/*.functions.ts  server functions (lead público, admin)
+  index.tsx  montar-plano.tsx  solicitacao-recebida.tsx  privacidade.tsx
+  admin.login.tsx                      /admin/login (público)
+  _authenticated/route.tsx             proteção (gerenciada pela integração)
+  _authenticated/admin.tsx             layout + aviso "sem permissão"
+  _authenticated/admin.index.tsx       painel (contagens reais)
+  _authenticated/admin.leads.tsx / admin.leads.$id.tsx
+  _authenticated/admin.clientes.tsx / admin.clientes.$id.tsx
+  _authenticated/admin.atendimentos.tsx  admin.lembretes.tsx  admin.configuracoes.tsx
+src/components/{brand,plan,admin}/
+src/lib/lead-schema.ts            zod compartilhado
+src/lib/public.functions.ts       submitLead, getPublicContact, getPrivacyInfo
+src/lib/admin.functions.ts        todas as funções de admin
+src/lib/require-admin.ts          middleware requireAdmin
 ```
-
-A 404 já existe no root e vai ganhar o visual da marca. O layout será testado em 320, 375, 390, 768 e 1280 px.
 
 ## 2. Modelo de dados
 
-- `app_role` enum: `admin`.
-- `admin_roles` (id, user_id → auth.users UNIQUE com role, role, created_at). Função `has_role(uid, role)` como security definer.
-- `public_contact_settings`: linha única (id fixo = 1, CHECK), `whatsapp_number` text nulo, validado por CHECK no formato E.164 BR, `whatsapp_enabled` bool, `display_name`, updated_at, updated_by.
-- `leads`: id uuid, `public_code` (ex.: `CC-7K3Q9P`, UNIQUE, gerado no servidor), `idempotency_key` uuid UNIQUE, environment_type (residencial|comercial), unit_count int (CHECK 1–50), unit_type enum (split, janela, cassete, piso-teto, outro, não sei), city, neighborhood, follow_up_pref enum, interests text[] (limpeza|revisao|orientacao), name, whatsapp, email nulo, consent bool (CHECK = true), consent_at, consent_text_version, status enum (novo|em_contato|orcamento_enviado|convertido|descartado; padrão `novo`), internal_notes nulo, phone_hash (para detectar duplicidade), created_at, updated_at.
-- `customers`: id, `lead_id` UNIQUE → leads, name, whatsapp, email, city, neighborhood, notes, created_at.
-- `service_orders`: id, customer_id → customers, kind (limpeza|revisao|orientacao|outro), status (aberta|agendada_manual|concluida|cancelada), scheduled_note text (combinado manualmente, sem agenda integrada), notes, created_at, updated_at.
-- `reminders`: id, customer_id, service_order_id nulo, due_date, title, done bool, created_at.
-- `lead_rate_limits` (phone_hash/ip_hash, window_start, count) para conter abuso.
-
-Cada tabela recebe GRANTs explícitos para `authenticated` e `service_role`. `anon` só recebe SELECT na view pública de contato.
+O modelo continua o da versão anterior (admin_roles, leads, customers, service_orders, reminders, lead_rate_limits), com estes ajustes:
+- `public_contact_settings` foi renomeada para `app_settings` (linha única, id=1). Guarda: `whatsapp_number` (CHECK no formato E.164 BR), `whatsapp_enabled`, `display_name` e os campos de privacidade: `controller_name`, `controller_document` (CNPJ/CPF opcional), `privacy_contact_channel`, `retention_period`, `privacy_updated_at`. Mais `updated_by` e `updated_at`.
+- `ready_for_real_data` é uma coluna gerada: fica verdadeira só quando controller_name, privacy_contact_channel e retention_period estão preenchidos.
+- `leads.idempotency_key` uuid NOT NULL UNIQUE; `leads.consent` CHECK (consent = true); `leads.status` com padrão `novo`.
+- `customers.lead_id` UNIQUE NOT NULL → leads (ON DELETE RESTRICT, para preservar a origem).
 
 ## 3. RLS por operação
 
-| Tabela | Anônimo | Admin (has_role) | Autenticado sem role |
+| Tabela | anon | authenticated sem role | admin |
 |---|---|---|---|
-| leads | nada (nenhum grant) | S/I/U/D | nada |
-| customers, service_orders, reminders | nada | S/I/U/D | nada |
-| admin_roles | nada | S apenas da própria linha; sem I/U/D pelo app | S da própria linha (para o painel saber que não tem acesso) |
-| public_contact_settings | nada na tabela | S/U | nada |
-| view `public_contact` (só número + enabled) | S | S | S |
-| lead_rate_limits | nada | nada | nada (só o servidor) |
+| leads, customers, service_orders, reminders | sem grant | sem acesso (RLS) | S/I/U/D via has_role |
+| app_settings | sem grant | sem acesso | S/U |
+| admin_roles | sem grant | S só da própria linha | S só da própria linha; I/U/D apenas via SQL do console |
+| lead_rate_limits | sem grant | sem acesso | sem acesso (só service_role) |
 
-O INSERT público não passa por RLS anônima. A server function `submitLead` valida tudo com zod, força `status='novo'`, `internal_notes=null`, `consent=true` e `consent_at=now()`, aplica o rate limit e grava com o cliente admin do servidor. Esse cliente fica só no servidor e é carregado dentro do handler.
+Nenhuma tabela concede acesso a `anon`. As leituras públicas passam só pelas server functions, que devolvem campos fixos.
 
-## 4. Entrada do lead
+## 4. Funções públicas
 
-1. O configurador guarda o estado em memória (React state no nível da rota), então voltar uma etapa preserva tudo. Nada vai para localStorage nem para a URL. Ao dar F5 o formulário volta vazio; isso é intencional e o rascunho fica só em memória.
-2. Na etapa 3 o consentimento começa desmarcado e o envio fica bloqueado até a validação passar.
-3. O cliente gera uma `idempotency_key` (uuid) por tentativa. Um duplo clique ou um reenvio devolve o mesmo resultado.
-4. O servidor valida e aplica os limites (ex.: 3 envios por telefone em 24 h, 10 por IP-hash por hora; IP só em hash, nunca guardado bruto). Os logs não registram campos pessoais.
-5. A resposta só sai depois do INSERT confirmado e traz `{ public_code, resumo não sensível }` (ambiente, quantidade, tipo, cidade, interesses).
-6. A navegação para `/solicitacao-recebida` leva esse resumo em memória (router state). Na URL fica só `?codigo=CC-XXXX`. A página não consulta o banco anonimamente: num F5 sem o state, aparece só o código e o aviso "guarde seu código".
-7. Se o servidor falhar, aparece um erro claro com "tentar novamente". O WhatsApp não é aberto e não há mensagem de sucesso.
+**`getPublicContact` (GET, sem autenticação)**: lê `app_settings` no servidor e devolve só `{ whatsappEnabled, whatsappNumber | null, displayName }`. Nenhum outro campo sai dali.
 
-## 5. WhatsApp
+**`getPrivacyInfo` (GET)**: devolve os campos de privacidade e `readyForRealData`.
 
-- O número é configurado apenas pelo admin em /admin/configuracoes, validado e normalizado (55 + DDD + número).
-- A tela de confirmação lê a view `public_contact`. Se estiver habilitado, mostra o botão `wa.me/<num>?text=` com o código e o resumo não sensível (sem nome nem telefone). Se não estiver, mostra "Copiar resumo" (clipboard) e "entraremos em contato pelo WhatsApp informado". Nenhum número aparece por padrão.
+**`submitLead` (POST)**:
+1. O zod valida tudo de novo no servidor. A função rejeita explicitamente quando `consent !== true` e grava `consent_text_version`.
+2. Se `readyForRealData` for falso, recusa com a mensagem "Ainda não estamos recebendo solicitações", e o formulário mostra esse aviso já na etapa 3.
+3. Rate limit atômico: `INSERT ... ON CONFLICT DO UPDATE SET count = count+1 RETURNING count`, por phone_hash e ip_hash, numa única instrução.
+4. Idempotência atômica: `INSERT ... ON CONFLICT (idempotency_key) DO NOTHING RETURNING public_code`. Se não voltar linha, faz SELECT pela chave e devolve o mesmo código. Assim não há corrida entre duplo clique e retry.
+5. O servidor força status `novo`, internal_notes nulo e consent_at = now().
+6. Responde `{ public_code, resumo não sensível }` só depois do INSERT confirmado. Os logs não levam PII.
 
-## 6. Primeiro administrador (seguro)
+**Chave estável no cliente**: a chave é gerada uma vez quando o usuário entra na etapa 3 (estado em memória) e reaproveitada em todas as tentativas, inclusive depois de falha de rede. Só é renovada se ele editar dados depois de um envio bem-sucedido, o que não acontece porque o fluxo segue para a confirmação. Se a rede falhar ou houver timeout, aparece "Não conseguimos confirmar o envio. Tentar novamente", e a nova tentativa usa a mesma chave. Não há tela de sucesso nem WhatsApp antes da confirmação.
 
-Não haverá cadastro público com privilégio nem endpoint de promoção. Passos:
-1. O operador cria o próprio usuário no painel do Cloud (Users → Add user, com confirmação de e-mail).
-2. Em Cloud → Database → SQL, roda `insert into admin_roles(user_id, role) select id,'admin' from auth.users where email='<seu e-mail>';` (instrução documentada na página de configurações e no README, sem o e-mail embutido).
-3. `/admin/login` faz só login com e-mail e senha; o cadastro público fica desligado. Um usuário logado sem role vê "Sem permissão" e não recebe dado nenhum, porque a RLS bloqueia.
+**Confirmação**: o resumo segue em memória (router state) e só `?codigo=` vai na URL. Não há consulta anônima a leads.
 
-## 7. Implementação em gates
+## 5. Funções de admin
 
-- **G1 UX/público**: tokens de design (#0F172A, #0D9488, #14B8A6, #F8FAFC, #F97316 em oklch), logo SVG, landing, configurador completo com validação, privacidade, 404 e head/SEO por rota. O envio fica desabilitado com o aviso "conexão pendente" até o G2. Aceite: navegar pelas 3 etapas, voltar sem perder dados, layout ok nos 5 tamanhos.
-- **G2 Cloud + persistência**: ativar o Cloud, criar as migrações das tabelas e grants, a server function `submitLead` com idempotência e rate limit, e a página de confirmação real. Aceite: um envio cria a linha `novo`, o duplo clique não duplica e uma falha simulada não mostra sucesso.
-- **G3 Auth + RLS**: login de admin, `has_role`, todas as políticas, verificação de role no layout admin. Aceite: um anônimo consultando `leads` pela API recebe erro ou vazio, e um usuário sem role recebe vazio.
-- **G4 Gestão**: lista e filtro de leads, mudança de status, notas internas, conversão de lead em cliente (sem duplicar, graças ao UNIQUE em lead_id), CRUD de atendimentos e lembretes, painel com contagens reais. Aceite: o fluxo lead → cliente → ordem → lembrete persiste depois de F5.
-- **G5 WhatsApp + testes + segurança**: configuração do número, botão e fallback, testes vitest (schema do lead, consentimento obrigatório, status forçado `novo`, formato do telefone, rate limit), scan de segurança, revisão de logs e de PII. Aceite: com o número desligado aparece só "Copiar"; com ele ligado, o link leva o código.
+O middleware `requireAdmin` encadeia `requireSupabaseAuth`, que valida o bearer no servidor, e depois `has_role(userId,'admin')` via `context.supabase`. Se falhar, a função lança 401/403 antes de qualquer consulta. Todas as funções em `admin.functions.ts` usam esse middleware, e as consultas rodam como o usuário, com a RLS valendo também. O cliente privilegiado (`client.server`) só é importado dentro de handlers públicos (`submitLead`, `getPublicContact`) e nunca chega ao bundle do navegador. O `csrfMiddleware` existente em `start.ts` fica, e o anexador de bearer é adicionado sem remover nada.
 
-Só passo para o gate seguinte depois de verificar o anterior no navegador.
+## 6. Conversão de lead em cliente
 
-## 8. Testes de aceitação
+A função SQL `convert_lead_to_customer(p_lead_id)` é SECURITY INVOKER, chamada por RPC pelo admin, e roda numa única transação:
+1. `SELECT ... FROM leads WHERE id = p_lead_id FOR UPDATE`; se o lead não existir, erro.
+2. `INSERT INTO customers (...) VALUES (...) ON CONFLICT (lead_id) DO NOTHING`.
+3. `UPDATE leads SET status='convertido'`.
+4. Devolve o customer_id, seja o novo ou o que já existia.
 
-F5 em cada etapa (o rascunho em memória se perde, como esperado). F5 na confirmação (só o código). F5 no admin (sessão mantida). Acesso anônimo direto a /admin/* (redireciona). Chamada da API anônima em cada tabela (negada). Envio com consentimento desmarcado e com campos inválidos via servidor (rejeitado). Celular em 320 px sem rolagem horizontal, com alvos de toque de 44 px e contraste AA.
+Chamar duas vezes devolve o mesmo cliente. Se qualquer passo falhar, nada é gravado. Se quem chama não for admin, a RLS bloqueia.
 
-## 9. O que é implementável agora e o que depende de terceiros
+## 7. Primeiro administrador (procedimento conferido no Cloud atual)
 
-**Dá para implementar agora:** todas as telas, banco, RLS, server functions, login, gestão, fallback de WhatsApp e testes.
+1. Em Cloud → **Users → Add user**, criar o operador com e-mail e senha. Usuários criados direto ali já saem confirmados.
+2. Em Cloud → **Database → Manage → SQL editor**, rodar o INSERT em `admin_roles` buscando pelo e-mail. A instrução fica documentada no README e numa nota em /admin/configuracoes.
+3. O cadastro público fica desligado. /admin/login só faz login. Não há endpoint de promoção, e `admin_roles` não aceita INSERT/UPDATE pelo app.
 
-**Depende do operador:** criar o primeiro admin (passo 6), cadastrar o número comercial de WhatsApp, identificar o controlador, o canal de contato e o prazo de retenção para completar a página /privacidade (até lá ela mostra um aviso visível de "texto provisório; não usar com visitantes reais"), e publicar o site.
+## 8. Privacidade e trava de dados reais
 
-**Depende de validação com clientes reais:** a taxa de conclusão do configurador, a clareza do FAQ, os limites de rate limit e as opções de tipo de aparelho e de acompanhamento.
+`/privacidade` mostra os campos preenchidos pelo admin em /admin/configuracoes: controlador, documento, canal de contato e prazo de retenção, além de um texto-base sem alegações de conformidade. Com algum campo vazio, a página mostra a faixa "Texto provisório", a landing e o configurador mostram "Em preparação: ainda não recebemos solicitações", e o `submitLead` recusa o envio. O painel do admin ganha um checklist de "Pronto para dados reais" (privacidade + WhatsApp opcional).
 
-## 10. Riscos e decisões
+## 9. Gates e critérios de aceitação
 
-- Rascunho só em memória: perde-se no F5, em troca de não guardar dados pessoais no navegador.
-- O rate limit por IP-hash é básico; um bot sofisticado passa. Um captcha fica fora do escopo, pois exige serviço externo.
-- A página de privacidade não é aconselhamento jurídico e precisa ser revisada antes do tráfego real.
-- Não haverá e-mails automáticos; o operador acompanha os leads pelo painel.
+- **G1 UX/público**: marca, tokens de cor, landing, configurador, privacidade, 404 e SEO. Aceite: percorrer as 3 etapas e voltar sem perder dados; consentimento desmarcado bloqueia; sem rolagem horizontal em 320/375/390/768/1280; contraste AA; alvos de toque de 44 px.
+- **G2 Cloud + persistência**: tabelas, grants, `submitLead` e `getPublicContact`. Aceite: um envio válido cria uma linha `novo`; 5 cliques rápidos geram 1 linha; uma falha de rede simulada mostra erro e o retry devolve o mesmo código; com `ready_for_real_data` falso, o envio é recusado; o banco indisponível nunca mostra sucesso.
+- **G3 Auth + RLS**: login, `requireAdmin` e políticas. Aceite: um anônimo direto na API de cada tabela é negado; chamar funções de admin sem token dá 401 e com usuário sem role dá 403; F5 no admin mantém a sessão; /admin anônimo redireciona.
+- **G4 Gestão**: leads, conversão, clientes, ordens, lembretes e painel. Aceite: converter duas vezes gera 1 cliente com status `convertido`; uma falha forçada não deixa cliente órfão; tudo persiste depois de F5.
+- **G5 WhatsApp + testes + segurança**: configuração, botão e fallback "Copiar resumo", testes e scan. Aceite: desligado mostra só "Copiar"; ligado, o link leva código e resumo sem PII; `getPublicContact` devolve só os 3 campos; o scan de segurança sai sem achados críticos.
+
+Testes automatizados (vitest): schema e consentimento obrigatório; status forçado `novo`; formato do telefone; idempotência (mesma chave dá mesmo código); recusa sem `ready_for_real_data`; payload de `getPublicContact` restrito; `requireAdmin` rejeitando sem sessão e sem role; regra da conversão idempotente. Os testes de banco reais (corrida, transação, RLS) são verificados no G2 a G4 por consultas no banco e chamadas à API como anônimo e como usuário comum.
+
+Nenhum gate avança sem passar no anterior.
+
+## 10. Limitações da plataforma e dependências
+
+- Os testes vitest rodam sem banco real. Concorrência, transação e RLS são validadas manualmente por consultas e chamadas reais em cada gate, e não em CI.
+- O rate limit por IP-hash é básico; não haverá captcha (exigiria serviço externo).
+- O F5 no configurador perde o rascunho (escolha de privacidade).
+- **Depende do operador**: criar o primeiro admin, preencher os dados de privacidade, configurar o WhatsApp e publicar.
+- **Depende de clientes reais**: conversão do funil, clareza do FAQ e ajuste dos limites.
+- O texto de privacidade não é parecer jurídico.
