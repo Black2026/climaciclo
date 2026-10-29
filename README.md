@@ -3,12 +3,12 @@
 **Seu ar em dia. Sua rotina mais leve.**
 
 > **Desafio DIO — Da ideia ao MVP com ChatGPT como co-founder e Lovable**  
-> **Situação em 29/10/2026:** MVP em construção; primeira versão da landing page visível no Lovable. **o erro 404 da navegação ao configurador foi corrigido e retestado, com a Etapa 1 exibida** e a geração foi pausada por falta de créditos. Backend, painel administrativo, testes de segurança, publicação e entrega **não estão concluídos**.
+> **Situação em 29/10/2026:** G1 homologado manualmente. G2 com banco e RLS inspecionados, recusa `not_ready` comprovada, UI com envio bloqueado e testes de PostgreSQL isolado aprovados para cenários sequenciais. GitHub Actions de teste/build/TypeScript aprovado (14 testes). **Ainda não é um MVP publicado pronto para receber clientes:** faltam confirmação real de persistência via aplicativo, autenticação e painel operacional, revisão de privacidade/segurança, publicação em URL pública e abertura do repositório à DIO. O teste opcional de concorrência apresentou consumo duplicado da cota, registrado no Issue #2.
 
 **Idealização e organização do projeto:** conta GitHub [`Black2026`](https://github.com/Black2026)  
 **Ferramentas de desenvolvimento:** ChatGPT (pesquisa, co-founder, arquitetura, SDD e revisão) + Lovable (planejamento e construção) + Lovable Cloud (backend previsto) + GitHub (versionamento e entrega).  
 **Repositório sincronizado:** [`Black2026/climaciclo`](https://github.com/Black2026/climaciclo) — branch `main`; conexão **Connected** e **In sync with GitHub** confirmadas na interface do Lovable em 29/10/2026. O repositório está **privado**, e foi confirmada a presença de `package.json` e do código-fonte iniciado pelo Lovable no GitHub.  
-**Aplicação pública:** **pendente** — inserir somente a URL efetivamente publicada e testada.
+**Aplicação pública:** **pendente** — usar somente a URL realmente publicada e testada. **Não confundir URL de prévia `id-preview--` com publicação final.**
 
 ---
 
@@ -80,7 +80,7 @@ O plano revisado do Lovable propõe **TanStack Start (React 19, SSR, TypeScript)
 
 Entidades planejadas: `admin_roles`, `app_settings`, `leads`, `customers`, `service_orders`, `reminders` e `lead_rate_limits`. O plano prevê validação Zod, consentimento explícito, idempotência de envios, limitação de abuso, funções administrativas com checagem de role e conversão transacional de lead em cliente.
 
-Esses controles estão **planejados, mas ainda não auditados no código**. Antes de usar dados reais, deverão ser verificados banco, políticas RLS, permissões, privacidade, fluxo do primeiro admin, armazenamento de segredos e relatório de segurança. O app não deve tratar nomes, telefones ou e-mails como dados públicos.
+Os elementos de banco e políticas RLS foram inspecionados no Lovable Cloud, e o bloqueio `not_ready` foi testado. Autorização efetiva de contas, fluxo do primeiro administrador, segurança geral e persistência positiva via aplicativo **continuam sem homologação**. O app não deve tratar nomes, telefones ou e-mails como dados públicos.
 
 Documentação: [especificação SDD](docs/11-especificacao-sdd.md), [plano revisado do Lovable](docs/15-plano-lovable-revisao-2.md) e [segurança e LGPD](docs/07-seguranca-lgpd.md).
 
@@ -137,7 +137,7 @@ O Lovable exibiu uma mensagem de falta de créditos, interrompendo o desenvolvim
 4. Concluir G2–G5 e documentar evidências reais e configurações de segurança.
 5. Publicar e testar a URL pública, conferir ausência de credenciais no Git, tornar o repositório público e entregar o **link do repositório** na DIO.
 
-Instruções detalhadas: [guia Lovable → GitHub](docs/17-guia-github-lovable.md) e [checklist final DIO](docs/19-checklist-entrega-dio.md).
+Instruções detalhadas: [guia Lovable → GitHub](docs/17-guia-github-lovable.md), [checklist final DIO](docs/19-checklist-entrega-dio.md) e **[roteiro de pré-entrega atualizado](docs/24-pre-entrega-dio-2026-10-29.md)**.
 
 ## 10. Estrutura documental prevista
 
@@ -167,4 +167,4 @@ evidencias/
 - IBGE — [Censo 2022, domicílios](https://www.ibge.gov.br/biblioteca/visualizacao/livros/liv102011.pdf) e [recorte municipal](https://www.ibge.gov.br/biblioteca/visualizacao/livros/liv102170.pdf).
 - Lovable — [Git sync com GitHub](https://docs.lovable.dev/integrations/github), [Lovable Cloud](https://docs.lovable.dev/features/cloud), [Plan Mode](https://docs.lovable.dev/features/plan-mode) e [Security](https://docs.lovable.dev/features/security-view).
 
-**Data de atualização:** 29 de outubro de 2026. A sincronização Lovable–GitHub foi confirmada por captura. README atualizado no repositório `main`. Os 20 documentos em `docs/` e as três capturas em `evidencias/` foram publicados e verificados. A publicação e os testes de ponta a ponta não foram realizados.
+**Data de atualização:** 29 de outubro de 2026. Preparação de entrega em revisão separada no GitHub. A publicação real, o painel e os testes de ponta a ponta não foram comprovados.
