@@ -22,3 +22,12 @@ Só marcar a homologação do banco isolado quando o GitHub Actions terminar com
 
 ## Segurança
 Nenhum token ou segredo de produção foi adicionado. `CLIMACICLO_ENABLE_LEAD_SUBMISSION` permanece `false`. Os dados da base real do Lovable e o estado `ready_for_real_data=false` permanecem intocados.
+
+## Resultado real do GitHub Actions — 29/10/2026
+
+O Pull Request [#1](https://github.com/Black2026/climaciclo/pull/1) acionou as duas suites na branch de homologação:
+
+- [G2 — PostgreSQL isolado, run #40964573062](https://github.com/Black2026/climaciclo/actions/runs/40964573062): `completed / success`; criação de roles fictícias, aplicação da migração real e execução dos testes SQL concluídas com sucesso.
+- [CI geral, run #40964572878](https://github.com/Black2026/climaciclo/actions/runs/40964572878): `completed / success`.
+
+**Conclusão:** suíte de banco descartável homologada nos cenários implementados. A idempotência testada é **sequencial**, não concorrente; não houve conexão com o Lovable Cloud, ativação real de cadastro ou teste de HTTP. O G2 completo continua aberto.
