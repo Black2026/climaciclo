@@ -123,12 +123,12 @@ O Lovable exibiu uma mensagem de falta de créditos, interrompendo o desenvolvim
 | [Erro 404 após clicar no CTA](evidencias/g1-001-erro-404.png) | Falha real no teste G1-001; não corrigida |
 | [Conexão Lovable → GitHub](evidencias/git-001-lovable-github-sync.png) | `Black2026/climaciclo`, `main`, `Connected` e `In sync with GitHub` |
 
-**Atenção:** os três arquivos PNG das capturas ainda não foram enviados ao GitHub; os links acima estarão indisponíveis até o upload. As capturas originais existem no pacote documental local. Novas imagens só serão adicionadas **após testes reais**, sem dados pessoais. Inventário: [evidências](evidencias/README.md) e [roteiro de testes](docs/05-testes-evidencias.md).
+**Evidências conferidas:** as três capturas PNG foram enviadas e verificadas na pasta `evidencias/` do GitHub. Novas imagens só serão adicionadas **após testes reais**, sem dados pessoais. Inventário: [evidências](evidencias/README.md) e [roteiro de testes](docs/05-testes-evidencias.md).
 
 ## 9. Próximas etapas
 
 1. **Concluído:** conectar o projeto Lovable à conta GitHub `Black2026`: repositório `climaciclo` na branch `main`, com mensagem `In sync with GitHub` no editor.
-2. **Concluído parcialmente:** atualizar `README.md`, adicionar os 20 arquivos `docs/` e `evidencias/README.md`, preservando o código existente. **Pendente:** enviar as três capturas originais PNG para `evidencias/`.
+2. **Concluído:** README, 20 documentos `docs/`, inventário e três capturas PNG publicados no repositório, preservando o código do Lovable.
 3. Corrigir e retestar o erro 404 do CTA; validar integralmente G1.
 4. Concluir G2–G5 e documentar evidências reais e configurações de segurança.
 5. Publicar e testar a URL pública, conferir ausência de credenciais no Git, tornar o repositório público e entregar o **link do repositório** na DIO.
@@ -154,7 +154,7 @@ evidencias/
   git-001-lovable-github-sync.png
 ```
 
-**Observação:** a estrutura acima é da documentação preparada. Quando ela for incorporada ao repositório real, as pastas e arquivos de código serão os exportados pelo Lovable; não substituir `src/`, configurações, migrações ou arquivos de dependências por esta documentação.
+**Observação:** a estrutura acima é da documentação preparada. A estrutura documental está incorporada ao repositório, junto ao código do Lovable; não substituir `src/`, configurações, migrações ou arquivos de dependências por esta documentação.
 
 ## 11. Fontes e referências
 
@@ -163,4 +163,4 @@ evidencias/
 - IBGE — [Censo 2022, domicílios](https://www.ibge.gov.br/biblioteca/visualizacao/livros/liv102011.pdf) e [recorte municipal](https://www.ibge.gov.br/biblioteca/visualizacao/livros/liv102170.pdf).
 - Lovable — [Git sync com GitHub](https://docs.lovable.dev/integrations/github), [Lovable Cloud](https://docs.lovable.dev/features/cloud), [Plan Mode](https://docs.lovable.dev/features/plan-mode) e [Security](https://docs.lovable.dev/features/security-view).
 
-**Data de atualização:** 29 de outubro de 2026. A sincronização Lovable–GitHub foi confirmada por captura. README atualizado no repositório `main`. As pastas complementares `docs/` e `evidencias/` ainda aguardam inclusão; seus links internos só funcionarão depois desse envio. A publicação e os testes de ponta a ponta não foram realizados.
+**Data de atualização:** 29 de outubro de 2026. A sincronização Lovable–GitHub foi confirmada por captura. README atualizado no repositório `main`. Os 20 documentos em `docs/` e as três capturas em `evidencias/` foram publicados e verificados. A publicação e os testes de ponta a ponta não foram realizados.
