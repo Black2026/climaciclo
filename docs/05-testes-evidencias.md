@@ -11,7 +11,7 @@ Testes previstos e observações reais. Nunca rotular como aprovado algo ainda n
 | G2-001 | Submeter lead válido | Persistir `status=novo` e código | Pendente |
 | G2-002 | Envio repetido | Uma única linha para uma chave | Pendente |
 | G2-003 | Falha de rede e retry | Nenhum falso sucesso; mesmo código | Pendente |
-| G2-004 | Privacidade incompleta | Bloquear dados reais | Pendente |
+| G2-004 | Privacidade incompleta | Bloquear dados reais | **Aprovado para RPC direta:** teste controlado de `submit_lead` respondeu `created=false`, `error=not_ready`, `public_code=NULL`; falta testar pela interface e conferir contagem de linhas |
 | G3-001 | Administrador | Login válido, logout, F5 mantém sessão | Pendente |
 | G3-002 | Anônimo/usuário sem role | Sem acesso a dados ou funções privadas | Pendente |
 | G4-001 | Conversão | Um cliente por lead; status sincronizado | Pendente |
@@ -25,3 +25,5 @@ Testes previstos e observações reais. Nunca rotular como aprovado algo ainda n
 Capturar tela, rota/URL, data, resultado esperado, resultado observado, correção e reteste. Ocultar nomes, telefones, e-mails, tokens e credenciais. Screenshots de prévia não demonstram funcionamento de backend.
 
 Evidências registradas no GitHub: prévia da landing, erro 404 original e sincronização Lovable–GitHub. Em 29/10/2026 o usuário mostrou a Etapa 1 da rota `/montar-plano` funcionando, mas a captura deste reteste ainda aguarda upload no repositório. G1-002 parcialmente verificado com captura adicional das Etapas 1 e 2 (ambiente residencial, 2 aparelhos Split, cidade Recife, bairro Boa Viagem, preferência semestral e interesse em limpeza). Em novo teste, o usuário confirmou retorno preservando valores e funcionalidade da Etapa 3; a captura mostra consentimento marcado, resumo de ambiente residencial, 2 aparelhos Split, Recife/Boa Viagem, acompanhamento semestral, interesse em limpeza e aviso explícito «Nenhuma solicitação foi enviada ou armazenada». G1-002 passou na execução manual relatada. Novo teste no celular: o consentimento desmarcado acionou a validação "É preciso aceitar para enviar", e o botão "Enviar solicitação — em breve" permaneceu desativado. A captura apresenta layout mobile sem desalinhamento evidente na região visível; a largura exata e os demais tamanhos não foram comprovados (G1-003 pendente de homologação completa). A nova captura ainda aguarda upload em `evidencias/`. Ver [incidente e reteste G1-001](16-teste-g1-404.md).
+
+**Teste G2-004 — 29/10/2026:** captura do SQL Editor confirmou `not_ready` na chamada direta da função com dados fictícios. Não constitui aprovação dos demais cenários G2. Evidência gráfica ainda deve ser anexada a `evidencias/`.
