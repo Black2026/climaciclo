@@ -60,3 +60,19 @@ ACL original em todas: `{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authe
 **Constatações:** as sete tabelas mantêm RLS ativado, proprietário `postgres`; os grants diretos e excessivos para `anon` e `authenticated` foram confirmados na ACL original. Nenhuma entrada explícita com beneficiário `PUBLIC` (formato `=...`) aparece nesse resultado. Existe a role adicional `sandbox_exec` com `INSERT` e `SELECT`; investigar sua finalidade, eventuais memberships e o alcance prático do RLS, sem modificar a role. Este CSV é evidência do **estado anterior à correção**, não da execução do script.
 
 **Status:** preflight 1 concluído e revisado. Pendente preflight 2 (ACLs decompostas, concessões `PUBLIC`), preflight 3 (EXECUTE de funções), backup e teste mais representativo do banco real antes de aplicar `20_restrict_grants_manual.sql`. Não marcar G4.5-03 como homologado. Não ativar `ready_for_real_data`.
+
+
+### Preflight 2 — concessões explícitas de ACL (CSV 30/10/2026 12:13)
+
+Foi analisado o anexo `query-results-export-2026-10-30_12-13-23.csv`, gerado ao executar isoladamente a **consulta 2** do preflight; 238 linhas, colunas `beneficiario`, `concedente`, `delegavel`, `privilegio`, `tabela`.
+
+- **Sete tabelas presentes:** `admin_roles`, `app_settings`, `customers`, `lead_rate_limits`, `leads`, `reminders`, `service_orders`.
+- Por papel nas sete tabelas: `anon` **56** concessões, `authenticated` **56**, `service_role` **56**, `postgres` **56** e `sandbox_exec` **14**, totalizando **238**.
+- Cada tabela concede a `anon` e `authenticated` **DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE e UPDATE** (8 concessões por tabela). A concessão `MAINTAIN` amplia o escopo da remediação; `REVOKE ALL PRIVILEGES` pretende removê-la junto das demais (verificar resultado na versão do PostgreSQL do Lovable).
+- `sandbox_exec` tem apenas `INSERT` e `SELECT` em cada tabela. O script de remediação atual **não altera `sandbox_exec`**; sua finalidade e vínculos de role/membership ainda requerem confirmação.
+- Todas as 238 linhas indicam `concedente=postgres` e `delegavel=false`.
+- **Nenhum beneficiário `PUBLIC`** apareceu no export. Esse achado é favorável à guarda de ACL do script, mas não exclui privilégios herdados de outras roles, privilégios no esquema, grants em objetos futuros nem EXECUTE em funções.
+
+**Resultado:** Consulta 2 **concluída e documentada**, sem alteração do banco. A Consulta 3, que verifica os privilégios EXECUTE das funções, ainda falta. O script `20_restrict_grants_manual.sql` **não está autorizado a executar no Lovable Cloud**; a CI usa uma fixture simplificada e não substitui avaliação com o ambiente real.
+
+**Nota:** CSV de origem foi entregue na conversa; não afirmar que os bytes foram anexados ao GitHub.
