@@ -154,3 +154,19 @@ O participante apresentou **duas capturas de navegador em modo anônimo** abrind
 **Próximo teste:** na mesma janela anônima e sem iniciar sessão, substituir apenas o caminho na URL da prévia por cada rota acima, confirmar redirecionamento ao formulário de login e inexistência de dados privados; registrar sem dados pessoais ou tokens. Nenhum teste de RLS direto foi realizado por essas capturas. O bloqueio de coleta real deve permanecer ativo.
 
 **Evidências:** capturas apresentadas na conversa; upload de PNGs para o GitHub ainda não verificado.
+
+
+### G4.5-01 — bloqueio visual de acesso anônimo homologado (30/10/2026)
+
+O participante confirmou, após teste na janela anônima da prévia do ClimaCiclo, que o acesso direto às quatro rotas abaixo foi **bloqueado sem autenticação**:
+
+| Rota | Resultado relatado |
+|---|---|
+| `/admin/leads` | Bloqueado |
+| `/admin/clientes` | Bloqueado |
+| `/admin/atendimentos` | Bloqueado |
+| `/admin/lembretes` | Bloqueado |
+
+A captura anterior já mostrava a tela de login na prévia anônima em vez do painel. **G4.5-01 aprovado no escopo da navegação/controle visual segundo confirmação do participante**. Nenhum teste de chamada direta das funções de servidor, políticas RLS ou permissão de usuário autenticado sem role foi demonstrado; esses cenários seguem pendentes (G4.5-02 e G4.5-03). Os resultados foram relatados em conversa, sem novas capturas individuais publicadas no repositório.
+
+**Próximo passo:** criar manualmente uma conta de teste autorizada, sem atribuir `admin`, mantendo cadastro público desativado, e comprovar negação de acesso à área administrativa após autenticação. Não alterar a role do administrador existente nem `ready_for_real_data=false`. Remover a conta de teste depois da homologação.
