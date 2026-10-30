@@ -204,3 +204,17 @@ O participante exportou o resultado da consulta de metadados do SQL Editor do Lo
 **Status G4.5-03:** **auditoria de ativação RLS aprovada**, mas a **homologação de políticas, privilégios e recusa de operações diretas ainda está pendente**. O CSV não informa `roles`, `cmd`, `qual`, `with_check`, privilégios `GRANT` ou resultados de tentativas de acesso sem role. A próxima evidência deve conter apenas uma consulta de leitura a `pg_policies` e, se necessário, `information_schema.role_table_grants`, sem mutações e sem contas reais.
 
 **Próximo teste:** verificar as expressões das 19 políticas e eventuais permissões excessivas; executar testes de negação de servidor com conta sem role em ambiente controlado. Manter `ready_for_real_data=false`, não habilitar captação real nem modificar RLS durante auditoria.
+
+
+### G4.5-03 — análise das expressões das 19 políticas (30/10/2026)
+
+Arquivo CSV exportado pelo participante (`query-results-export-2026-10-30_11-36-09.csv`) examinado com separador **ponto e vírgula**: **19 políticas** analisadas nas 6 tabelas com políticas. A tabela `lead_rate_limits` não possui nenhuma, compatível com uso interno e RLS habilitado.
+
+- `admin_roles`: `SELECT` para `authenticated`, com `USING (user_id = auth.uid())`. Não há políticas de INSERT/UPDATE/DELETE para clientes comuns.
+- `app_settings`: `SELECT` e `UPDATE` para `authenticated`, condicionados a `has_role(auth.uid(), 'admin'::app_role)`; UPDATE possui `USING` e `WITH CHECK`.
+- `leads`, `customers`, `service_orders` e `reminders`: cada tabela possui SELECT/INSERT/UPDATE/DELETE para `authenticated`. SELECT/DELETE exigem `USING has_role(..., 'admin')`; INSERT exige `WITH CHECK has_role(..., 'admin')`; UPDATE exige ambos.
+- Nenhuma política retornada usa papel `anon` ou expressão `true` irrestrita. As condições exibidas restringem operações de usuário comum à role de administrador.
+
+**Resultado:** inspeção das expressões RLS **aprovada**, sem política excessivamente permissiva identificada no CSV. Isso **não comprova sozinho** a segurança efetiva: continuam pendentes verificação dos GRANTs e EXECUTEs vigentes, comportamento de `SECURITY DEFINER`, testes negativos diretos na API com conta sem role, e isolamento efetivo dos dados. A migração versionada `drizzle/migrations/0000_migration.sql` prevê `grant select,insert,update,delete` a `authenticated` nas tabelas operacionais, mas o RLS condiciona as linhas à role administrativa. O arquivo de migração não garante que o esquema implantado esteja idêntico.
+
+**Próxima consulta indicada:** listar privilégios efetivos do banco (somente leitura), especialmente `anon` e `authenticated`, e permissões de execução das funções sensíveis. Não modificar `ready_for_real_data`, não desativar RLS, não adicionar políticas nem inserir registros.
