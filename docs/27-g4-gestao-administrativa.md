@@ -109,3 +109,28 @@
 - `ready_for_real_data` e as políticas RLS permanecem inalteradas. Sem modificações de esquema ou segredos.
 
 **Aceite pendente:** CI e segurança verdes, revisão do PR, merge controlado, renderização da rota no Lovable, filtro de estados e controle sem clientes. Persistência real após F5 e mudança de status precisam de um cliente/registro legítimo de teste e ainda não estarão homologadas apenas pelas capturas da tela vazia. G4.5 tratará o teste de usuário autenticado sem role e os testes diretos de RLS/API.
+
+
+## Homologação visual G4.4 — Lembretes (30/10/2026)
+
+- PR [#12](https://github.com/Black2026/climaciclo/pull/12) mesclado em `main` (commit `f56bd508694a45abd375795e604249c29a259c45`); [CI pós-merge aprovada](https://github.com/Black2026/climaciclo/actions/runs/41066434619).
+- O participante enviou três capturas da Visualização Lovable: painel `/admin` com botão **Gerenciar lembretes**, rota `/admin/lembretes`, tabela e filtro com as opções **Pendentes**, **Concluídos** e **Todos**.
+- Estado vazio exibido: **Nenhum lembrete encontrado**; sem clientes cadastrados, aparece aviso de que não é possível criar lembretes sem cliente.
+- O painel mantém contagens zero, recepção real de leads bloqueada e WhatsApp comercial desabilitado.
+- **Aprovado visualmente:** rota, navegação, filtro, tabela vazia e bloqueio de criação sem cliente.
+- **Pendente:** testar criação, conclusão/reabertura e persistência após F5 com registros de ensaio autorizados, negação de acesso a usuário autenticado sem role e controles de RLS/API.
+- Capturas compartilhadas na conversa, mas upload em `evidencias/` não foi verificado.
+
+## G4.5 — Plano de homologação final (a executar)
+
+| Caso | Ação controlada | Aceite | Estado |
+|---|---|---|---|
+| G4.5-01 | Usuário sem login abre `/admin`, `/admin/leads`, `/admin/clientes`, `/admin/atendimentos` e `/admin/lembretes` | Redirecionamento para login, sem dados | Pendente |
+| G4.5-02 | Usuário autenticado sem role `admin` tenta as mesmas rotas | Acesso negado; sem dados privados | Pendente |
+| G4.5-03 | Conta sem role chama funções administrativas diretamente | Servidor nega leitura e mutação, RLS mantém restrições | Pendente |
+| G4.5-04 | Admin acessa painel, atualiza F5 e sai | Sessão preservada e logout efetivo | Aprovado anteriormente em G3; repetir regressão |
+| G4.5-05 | Revalidar `ready_for_real_data=false` e botão de envio público inativo | Nenhuma coleta real habilitada | Pendente (captura mostra aviso, não prova teste de backend) |
+| G4.5-06 | Testes isolados de lead, conversão, cliente, atendimento e lembrete | Alterações persistem, sem duplicação indevida | Pendente — requer base de testes isolada e dados sintéticos, não banco real |
+| G4.5-07 | Revisar CI, dependências, responsividade e evidências | Sem regressões; capturas sem dados pessoais | Pendente |
+
+**Regra de segurança:** não ativar `ready_for_real_data`, não habilitar cadastro público e não adicionar dados pessoais reais para obter evidências. Não executar testes destrutivos na base de produção. Registros de ensaio devem ocorrer somente em ambiente separado, sem usuários/clientes reais, com autorização explícita e possibilidade de limpeza.
