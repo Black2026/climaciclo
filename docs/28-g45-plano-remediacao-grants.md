@@ -145,3 +145,18 @@ CSV `query-results-export-2026-10-30_12-35-45.csv` efetivamente inspecionado: **
 **Tratamento recomendado:** preparar uma segunda migração/manual SQL específica de `ALTER DEFAULT PRIVILEGES FOR ROLE ... IN SCHEMA public REVOKE ...`, revisando separadamente tabelas, sequências e funções, a política de grants do Lovable/Supabase e o impacto nas operações futuras e nas roles da plataforma. O executor deve ter autoridade para alterar default privileges dos dois proprietários. Alterações de default ACL **não removem** privilégios de objetos atuais, por isso não substituem `20_restrict_grants_manual.sql`. Não executar no Lovable antes de backup restaurável e revisão do fornecedor/operador. Documentar consulta de pós-verificação e testes de criação de objetos novos **somente em ambiente isolado**.
 
 **Gate:** diagnóstico de default ACL concluído; remediação completa e homologação de segurança **pendentes**. Não declarar o desafio finalizado operacionalmente; captação real segue desativada.
+
+
+### Evidência visual de backups Lovable (30/10/2026)
+
+O participante enviou captura da tela **More → Database → Backups** do projeto ClimaCiclo. Ela exibe **três opções de restauração**:
+
+| Backup listado (UTC) | Horário correspondente Recife (UTC−03) |
+|---|---|
+| 30/10/2026 13:11:32 | 30/10/2026 10:11:32 |
+| 29/10/2026 18:44:24 | 29/10/2026 15:44:24 |
+| 29/10/2026 16:45:18 | 29/10/2026 13:45:18 |
+
+**Evidência comprovada:** a interface mostra três backups e os controles `Restore to this backup`. **Não foi testada a integridade ou a restauração** de qualquer um, nem demonstrada uma exportação independente. Restaurar pode reverter **schema e dados** ao ponto escolhido e descartar mudanças posteriores. **Nenhuma restauração foi solicitada nem executada.**
+
+**Condição de segurança antes da remediação real:** exportar banco para cópia independente e preservá-la fora do GitHub; verificar a integridade do arquivo e obter procedimento de recuperação autorizado. A exportação de banco pode incluir autenticação e dados sensíveis, portanto não publicar nem enviar o dump no chat. Backups agendados e exportação independente são proteções complementares: a existência dos três backups na UI não equivale à confirmação de recuperação. Ainda não executar `20_restrict_grants_manual.sql`, especialmente porque a correção de ACL padrão para objetos futuros segue pendente.
