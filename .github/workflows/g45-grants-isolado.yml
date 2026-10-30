@@ -1,0 +1,63 @@
+name: G4.5 - PostgreSQL grants isolados
+
+on:
+  pull_request:
+    paths:
+      - 'security/sql/**'
+      - '.github/workflows/g45-grants-isolado.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  grants-isolados:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: climaciclo_isolado
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGDATABASE: climaciclo_isolado
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar fixture (somente Postgres descartavel)
+        run: psql -v ON_ERROR_STOP=1 -f security/sql/test_fixture_isolated.sql
+      - name: Verificar que o estado inicial reproduz privilegios excessivos
+        run: |
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT has_table_privilege('anon','public.leads','TRUNCATE')" | grep -qx t
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT has_table_privilege('authenticated','public.app_settings','TRIGGER')" | grep -qx t
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT has_table_privilege('anon','public.leads','MAINTAIN') AND has_table_privilege('authenticated','public.leads','MAINTAIN')" | grep -qx t
+      - name: Negativo - grant PUBLIC impede aplicacao
+        run: |
+          psql -v ON_ERROR_STOP=1 -c "GRANT SELECT ON public.leads TO PUBLIC"
+          if psql -v ON_ERROR_STOP=1 -f security/sql/20_restrict_grants_manual.sql > /tmp/negative.log 2>&1; then
+            echo "::error::Remediacao deveria abortar com ACL PUBLIC"
+            exit 1
+          fi
+          grep -q 'ACL PUBLIC encontrada' /tmp/negative.log
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT has_table_privilege('anon','public.leads','TRUNCATE')" | grep -qx t
+          psql -v ON_ERROR_STOP=1 -c "REVOKE SELECT ON public.leads FROM PUBLIC"
+      - name: Remediacao transacional e verificacoes
+        run: |
+          psql -v ON_ERROR_STOP=1 -f security/sql/20_restrict_grants_manual.sql
+          psql -v ON_ERROR_STOP=1 -f security/sql/30_postflight_read_only.sql >/tmp/postflight.txt
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT bool_and(NOT has_table_privilege('anon',format('public.%I',t),'TRUNCATE') AND NOT has_table_privilege('authenticated',format('public.%I',t),'TRUNCATE') AND NOT has_table_privilege('anon',format('public.%I',t),'MAINTAIN') AND NOT has_table_privilege('authenticated',format('public.%I',t),'MAINTAIN')) FROM unnest(ARRAY['admin_roles','app_settings','leads','customers','service_orders','reminders','lead_rate_limits']) t" | grep -qx t
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT NOT has_table_privilege('anon','public.leads','SELECT') AND has_table_privilege('authenticated','public.leads','SELECT') AND has_table_privilege('service_role','public.leads','TRUNCATE')" | grep -qx t
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT ready_for_real_data FROM public.app_settings WHERE id=1" | grep -qx f
+      - name: Idempotencia da remediacao
+        run: psql -v ON_ERROR_STOP=1 -f security/sql/20_restrict_grants_manual.sql
