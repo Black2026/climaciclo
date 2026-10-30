@@ -55,3 +55,22 @@ O participante apresentou captura do Lovable em **Visualização** com o seletor
 - Participante apresentou **captura da Visualização Lovable mostrando o formulário correto de Área do operador**, campos E-mail/Senha, botão Entrar e aviso de acesso exclusivo. A mensagem `Verificando autorização...` não aparece nessa página. **Correção visual homologada.**
 - **Ainda pendente:** criação segura da primeira conta de operador no Cloud (Users); concessão da role `admin` por operação restrita no SQL Editor, testes de autenticação efetiva, rejeição de usuário sem role, acesso anônimo, F5 e logout. Não há evidência de login efetivo; nenhuma credencial deve ser registrada no repositório ou em captura.
 - A coleta `ready_for_real_data` deve permanecer bloqueada enquanto G2, G3 e privacidade não estiverem homologados.
+
+
+## Concessão controlada da role administrativa — 30/10/2026
+
+O participante apresentou captura do **Lovable Cloud → Database → SQL editor** com um `INSERT INTO public.admin_roles (user_id, role) ... RETURNING role` executado para uma conta previamente criada e confirmada. O resultado exibido contém uma única linha com `role = admin`, evidenciando a atribuição de privilégio à conta selecionada.
+
+**Privacidade:** o e-mail visível na captura foi deliberadamente **omitido** deste documento; nenhuma senha, UUID de usuário ou token foi versionado. O operador também apresentou captura de **Authentication settings** com login por Email habilitado, **Disable sign-up** habilitado e **Enable anonymous users** desligado.
+
+**Concluído:** autenticação por e-mail configurada; cadastro público desabilitado; primeira role `admin` concedida no banco. O comando ter retornado uma linha demonstra a concessão para a conta selecionada, mas **não comprova autenticação efetiva via interface, acesso ao dashboard ou segurança integral**.
+
+**Próximos testes G3 (não executados ainda):**
+
+1. Entrar na URL `/admin/login` usando credenciais apenas na prévia do Lovable (não compartilhar).
+2. Confirmar redirecionamento para `/admin`, dados e contadores reais sem inventar registros.
+3. Atualizar `/admin` com F5 e confirmar que a sessão persiste.
+4. Clicar em `Sair da conta`, atualizar e confirmar que painel não permite acesso anônimo.
+5. Caso viável, validar conta autenticada sem role, acessos anônimos à API/RLS e ausência de dados privados na resposta.
+
+**Proteção:** manter `ready_for_real_data=false` e o envio real de leads desabilitado.
