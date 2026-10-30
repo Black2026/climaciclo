@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getMyAccess } from "@/lib/admin.functions";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteChrome";
 
-export const Route = createFileRoute("/admin/login")({
+export const Route = createFileRoute("/admin_/login")({
   head: () => ({ meta: [{ title: "Entrar — Operador ClimaCiclo" }, { name: "robots", content: "noindex, nofollow" }] }),
   component: AdminLogin,
 });
