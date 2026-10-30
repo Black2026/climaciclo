@@ -97,3 +97,15 @@
 - A coleta real de leads e o WhatsApp comercial continuam desativados conforme capturas. `ready_for_real_data=false` permanece requisito obrigatório para os próximos Gates.
 
 **Próximo Gate:** G4.4 — lembretes, mantendo a API de gestão protegida e o processo de PR + CI + revisão + teste visual.
+
+
+## Implementação proposta G4.4 — Lembretes (30/10/2026)
+
+- Rota independente `/admin/lembretes`, com consulta via `listReminders` e autenticação + role `admin` obrigatórias.
+- Filtros **Pendentes**, **Concluídos** e **Todos**; tabela vazia sem dados fictícios, com descrição, cliente, vencimento e ação.
+- Formulário de criação exige cliente existente, título e data válida; utiliza `createReminder` no servidor e não dispara mensagens automáticas.
+- Ação **Concluir/Reabrir** utiliza `toggleReminder` no servidor. Apenas administradores autorizados podem alterar o estado.
+- Com zero clientes, apenas o aviso informativo é apresentado; nenhuma criação é liberada, preservando a integridade referencial.
+- `ready_for_real_data` e as políticas RLS permanecem inalteradas. Sem modificações de esquema ou segredos.
+
+**Aceite pendente:** CI e segurança verdes, revisão do PR, merge controlado, renderização da rota no Lovable, filtro de estados e controle sem clientes. Persistência real após F5 e mudança de status precisam de um cliente/registro legítimo de teste e ainda não estarão homologadas apenas pelas capturas da tela vazia. G4.5 tratará o teste de usuário autenticado sem role e os testes diretos de RLS/API.
