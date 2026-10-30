@@ -10,26 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as MontarPlanoRouteImport } from './routes/montar-plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
-import { Route as SolicitacaoRecebidaRouteImport } from './routes/solicitacao-recebida'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AdminLoginRouteImport } from './routes/admin.login'
-import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MontarPlanoRoute = MontarPlanoRouteImport.update({
-  id: '/montar-plano',
-  path: '/montar-plano',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
@@ -37,92 +22,31 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
   path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SolicitacaoRecebidaRoute = SolicitacaoRecebidaRouteImport.update({
-  id: '/solicitacao-recebida',
-  path: '/solicitacao-recebida',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/montar-plano': typeof MontarPlanoRoute
   '/privacidade': typeof PrivacidadeRoute
-  '/solicitacao-recebida': typeof SolicitacaoRecebidaRoute
-  '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/admin/login': typeof AdminLoginRoute
-  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/montar-plano': typeof MontarPlanoRoute
   '/privacidade': typeof PrivacidadeRoute
-  '/solicitacao-recebida': typeof SolicitacaoRecebidaRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/montar-plano': typeof MontarPlanoRoute
   '/privacidade': typeof PrivacidadeRoute
-  '/solicitacao-recebida': typeof SolicitacaoRecebidaRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/admin/login': typeof AdminLoginRoute
-  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/montar-plano'
-    | '/privacidade'
-    | '/solicitacao-recebida'
-    | '/admin'
-    | '/admin/login'
-    | '/admin/'
+  fullPaths: '/' | '/privacidade'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/montar-plano'
-    | '/privacidade'
-    | '/solicitacao-recebida'
-    | '/admin/login'
-    | '/admin'
-  id:
-    | '__root__'
-    | '/'
-    | '/_authenticated'
-    | '/montar-plano'
-    | '/privacidade'
-    | '/solicitacao-recebida'
-    | '/_authenticated/admin'
-    | '/admin/login'
-    | '/_authenticated/admin/'
+  to: '/' | '/privacidade'
+  id: '__root__' | '/' | '/privacidade'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  MontarPlanoRoute: typeof MontarPlanoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
-  SolicitacaoRecebidaRoute: typeof SolicitacaoRecebidaRoute
-  AdminLoginRoute: typeof AdminLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -134,20 +58,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/montar-plano': {
-      id: '/montar-plano'
-      path: '/montar-plano'
-      fullPath: '/montar-plano'
-      preLoaderRoute: typeof MontarPlanoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/privacidade': {
       id: '/privacidade'
       path: '/privacidade'
@@ -155,66 +65,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/solicitacao-recebida': {
-      id: '/solicitacao-recebida'
-      path: '/solicitacao-recebida'
-      fullPath: '/solicitacao-recebida'
-      preLoaderRoute: typeof SolicitacaoRecebidaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/admin/': {
-      id: '/_authenticated/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
   }
 }
 
-interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
-}
-
-const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
-}
-
-const AuthenticatedAdminRouteWithChildren =
-  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
-
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-}
-
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  MontarPlanoRoute: MontarPlanoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
-  SolicitacaoRecebidaRoute: SolicitacaoRecebidaRoute,
-  AdminLoginRoute: AdminLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

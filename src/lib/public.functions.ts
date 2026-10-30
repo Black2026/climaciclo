@@ -47,6 +47,10 @@ export const getPrivacyInfo = createServerFn({ method: "GET" }).handler(async ()
 export const submitLead = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => input)
   .handler(async ({ data }): Promise<SubmitResult> => {
+    // Independent server-side release gate. Never rely on a disabled browser button.
+    if (process.env["CLIMACICLO_ENABLE_LEAD_SUBMISSION"] !== "true") {
+      return { ok: false, error: "not_ready" };
+    }
     const prepared = prepareLead(data);
     if (!prepared.ok) return { ok: false, error: prepared.error };
 
