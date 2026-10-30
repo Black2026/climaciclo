@@ -1,5 +1,9 @@
 # ClimaCiclo 🌬️
 
+> **Atualização de 30/10/2026 — MVP demonstrativo publicado:** [Abrir ClimaCiclo](https://pixel-perfect-picture-9455.lovable.app). Os testes do configurador, consentimento, login/logout, RLS, permissões e a análise de segurança do Lovable tiveram resultados positivos nas verificações registradas. O envio real de solicitações continua desativado. **A homologação independente de autorização da API e de persistência positiva ainda está pendente.** Consulte [o registro G4.5 e publicação](docs/24-homologacao-g45-publicacao-2026-10-30.md). O repositório está privado; será necessário disponibilizar acesso à avaliação da DIO.
+
+> **Nota histórica:** os status datados de 29/10/2026 abaixo retratam o avanço naquele dia e não substituem a atualização acima.
+
 **Seu ar em dia. Sua rotina mais leve.**
 
 > **Desafio DIO — Da ideia ao MVP com ChatGPT como co-founder e Lovable**  
