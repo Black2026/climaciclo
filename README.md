@@ -168,3 +168,16 @@ evidencias/
 - Lovable — [Git sync com GitHub](https://docs.lovable.dev/integrations/github), [Lovable Cloud](https://docs.lovable.dev/features/cloud), [Plan Mode](https://docs.lovable.dev/features/plan-mode) e [Security](https://docs.lovable.dev/features/security-view).
 
 **Data de atualização:** 29 de outubro de 2026. A sincronização Lovable–GitHub foi confirmada por captura. README atualizado no repositório `main`. Os 20 documentos em `docs/` e as três capturas em `evidencias/` foram publicados e verificados. A publicação e os testes de ponta a ponta não foram realizados.
+
+## Atualização de execução — 30/10/2026
+
+> Esta seção prevalece sobre os estados históricos de 29/10/2026 encontrados nas seções anteriores. **Entrega técnica parcial/homologação de segurança ainda pendente.**
+
+- **G1:** landing, formulário de três etapas, consentimento e responsividade aprovados conforme testes manuais do participante; envio real continua bloqueado.
+- **G2:** sete tabelas Cloud, RLS habilitado, funções de servidor e bloqueio `ready_for_real_data=false` demonstrados. Fluxo real de persistência de leads não homologado.
+- **G3:** autenticação administrativa, sessão após F5, logout, acesso anônimo negado e usuário autenticado sem papel `admin` negado, conforme testes manuais relatados e capturas. Testes diretos da API seguem pendentes.
+- **G4.1–G4.4:** interfaces administrativas de leads, clientes, atendimentos e lembretes implementadas e integradas; telas e estados vazios testados visualmente. CRUD com dados sintéticos persistentes ainda não homologado.
+- **G4.5:** auditorias Lovable Cloud encontraram grants excessivos nas sete tabelas para `anon` e `authenticated`, inclusive `TRUNCATE` e `MAINTAIN`. 7/7 tabelas têm RLS e 19 políticas inspecionadas; grants de funções sensíveis conferidos. A [PR #13](https://github.com/Black2026/climaciclo/pull/13) prepara remediação SQL **manual e não executada no banco real**. Teste transacional de grants em PostgreSQL 17 efêmero, CI e verificação de segurança passaram no SHA `38b55eeeebc28cf3134d03f40e634e318fa5362c`; isso não substitui validação no Lovable.
+- **Entrega DIO:** repositório GitHub [`Black2026/climaciclo`](https://github.com/Black2026/climaciclo) contém código e documentação, mas continua **privado** na última verificação; URL pública publicada e testada **não foi confirmada**. Não alegar que a publicação ou o recebimento real de solicitações foram concluídos.
+
+**Evidências e caminhos de revisão:** [G3](docs/26-regressao-zod4-g3.md), [G4/G4.5](docs/27-g4-gestao-administrativa.md), [plano de remediação](docs/28-g45-plano-remediacao-grants.md), [checklist da DIO](docs/19-checklist-entrega-dio.md). **Não incluir tokens, senhas ou dados pessoais na entrega.**
