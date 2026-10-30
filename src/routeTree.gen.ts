@@ -10,11 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MontarPlanoRouteImport } from './routes/montar-plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as SolicitacaoRecebidaRouteImport } from './routes/solicitacao-recebida'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MontarPlanoRoute = MontarPlanoRouteImport.update({
+  id: '/montar-plano',
+  path: '/montar-plano',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
@@ -22,31 +29,49 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
   path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SolicitacaoRecebidaRoute = SolicitacaoRecebidaRouteImport.update({
+  id: '/solicitacao-recebida',
+  path: '/solicitacao-recebida',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/montar-plano': typeof MontarPlanoRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/solicitacao-recebida': typeof SolicitacaoRecebidaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/montar-plano': typeof MontarPlanoRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/solicitacao-recebida': typeof SolicitacaoRecebidaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/montar-plano': typeof MontarPlanoRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/solicitacao-recebida': typeof SolicitacaoRecebidaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/privacidade'
+  fullPaths: '/' | '/montar-plano' | '/privacidade' | '/solicitacao-recebida'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/privacidade'
-  id: '__root__' | '/' | '/privacidade'
+  to: '/' | '/montar-plano' | '/privacidade' | '/solicitacao-recebida'
+  id:
+    | '__root__'
+    | '/'
+    | '/montar-plano'
+    | '/privacidade'
+    | '/solicitacao-recebida'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MontarPlanoRoute: typeof MontarPlanoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  SolicitacaoRecebidaRoute: typeof SolicitacaoRecebidaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +83,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/montar-plano': {
+      id: '/montar-plano'
+      path: '/montar-plano'
+      fullPath: '/montar-plano'
+      preLoaderRoute: typeof MontarPlanoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacidade': {
       id: '/privacidade'
       path: '/privacidade'
@@ -65,12 +97,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/solicitacao-recebida': {
+      id: '/solicitacao-recebida'
+      path: '/solicitacao-recebida'
+      fullPath: '/solicitacao-recebida'
+      preLoaderRoute: typeof SolicitacaoRecebidaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MontarPlanoRoute: MontarPlanoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  SolicitacaoRecebidaRoute: SolicitacaoRecebidaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

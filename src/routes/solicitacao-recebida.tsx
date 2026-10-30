@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
@@ -77,7 +78,7 @@ function Received() {
   );
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
+function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen">
       <SiteHeader cta={false} />
