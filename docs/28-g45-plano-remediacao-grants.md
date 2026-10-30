@@ -98,3 +98,27 @@ O resultado **corresponde às concessões declaradas na migração original**. `
 Após inspecionar os resultados, foi ampliada a verificação de pós-condições em `20_restrict_grants_manual.sql` para também rejeitar `MAINTAIN` em `anon`/`authenticated`, além de `TRUNCATE`, `REFERENCES` e `TRIGGER`. O teste com PostgreSQL 17 é a referência para a versão que oferece esse privilégio. Foi criado `security/sql/15_preflight_roles_read_only.sql`, que consulta memberships/herança de papéis, privilégios sobre o esquema `public` e ACLs padrão para novos objetos. **Esses resultados do Lovable Cloud ainda não foram recebidos.**
 
 **Critérios mínimos antes de aplicar no Lovable:** conferir esses três resultados, ter backup/snapshot restaurável verificado e responsável autorizado para execução, revisar eventuais grants herdados, e confirmar a flag `ready_for_real_data=false`. Em seguida, executar a correção de forma supervisionada e produzir `30_postflight_read_only.sql`, além dos testes de regressão. A aprovação do workflow isolado não dispensa esses procedimentos; nenhuma modificação remota foi realizada nesta revisão.
+
+
+### Diagnóstico complementar — herança de papéis (CSV 30/10/2026 12:30)
+
+O participante executou no Lovable SQL Editor a primeira consulta de `security/sql/15_preflight_roles_read_only.sql` e enviou `query-results-export-2026-10-30_12-30-26.csv` (10 linhas, separado por `;`). **Nenhuma modificação no banco foi executada.**
+
+Resumo exato das associações diretas (`papel` = membro, `papel_herdado` = papel do qual o membro é associado):
+
+| Membro | Papel associado | admin_option | inherit_option | set_option |
+|---|---|---|---|---|
+| `authenticator` | `anon` | false | false | true |
+| `authenticator` | `authenticated` | false | false | true |
+| `authenticator` | `service_role` | false | false | true |
+| `postgres` | `anon` | true | true | true |
+| `postgres` | `authenticated` | true | true | true |
+| `postgres` | `sandbox_exec` | true | false | false |
+| `postgres` | `service_role` | true | true | true |
+| `supabase_realtime_admin` | `anon` | false | false | true |
+| `supabase_realtime_admin` | `authenticated` | false | false | true |
+| `supabase_realtime_admin` | `service_role` | false | false | true |
+
+**Interpretação:** nenhum registro contém `anon`, `authenticated`, `service_role` ou `sandbox_exec` como **membro** de outra role, portanto não aparece herança de grants de terceiros por essas quatro roles no conjunto consultado. O fato de `authenticator` e `supabase_realtime_admin` poderem `SET ROLE` para as roles de API **não implica** que essas roles possam assumir `authenticator` ou `supabase_realtime_admin`; as associações são direcionais. O `postgres` tem associação a `sandbox_exec` sem `INHERIT` e sem `SET`. Nenhuma dessas associações deve ser alterada durante esta remediação.
+
+**Status:** primeira consulta do diagnóstico complementar **concluída**, sem sinal de grants herdados para `anon`/`authenticated`. Permanecem pendentes as consultas de USAGE/CREATE no schema `public` e de privilégios padrão (default ACL), além de backup verificado e aplicação supervisionada da correção. O script de remediação NÃO foi aplicado. O PR #13 segue em rascunho.
