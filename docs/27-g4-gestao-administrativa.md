@@ -61,3 +61,14 @@
 - Tela não apresenta telefone e não armazena credenciais no browser. Não modifica o banco, `ready_for_real_data` ou o bloqueio de captação.
 
 **Aceite pendente:** CI e segurança aprovados, revisão do PR, integração `main`, abertura de `/admin/clientes` no Lovable autenticado, verificação de lista vazia, pesquisa e detalhes (quando houver registros), persistência das notas após F5 e acesso negado sem permissão. Não cadastrar clientes fictícios automaticamente.
+
+
+## Homologação visual G4.2 — Gestão de Clientes (30/10/2026)
+
+- **PR #10** `feat/g4-clientes` integrado à `main` no commit `3d9c15f407e7f0545b6f8056249d0743f4080924`; [CI pós-merge](https://github.com/Black2026/climaciclo/actions/runs/41064293381) concluída com sucesso.
+- O participante enviou duas capturas da Visualização do Lovable: `/admin/clientes` e `/admin`, evidenciando **Gestão de clientes**, busca por nome/cidade/bairro, tabela com Nome/Cidade/Bairro/Cadastro/Ação, estado `Nenhum cliente encontrado.` e o botão `Gerenciar clientes` no painel.
+- O painel mostra contagens zeradas e aviso de bloqueio de recebimento de leads reais e WhatsApp desativado.
+- **Aprovado visualmente:** renderização da rota, da pesquisa, da tabela vazia e acesso pelo painel.
+- **Ainda pendente de teste funcional:** buscas com registros, abrir detalhes, atualizar notas, persistência após F5, acesso por usuário sem role e bloqueio da API/RLS.
+- Capturas compartilhadas na conversa, **ainda não anexadas à pasta `evidencias/` no GitHub**; não reproduzir dados pessoais na documentação.
+- O bloqueio de coleta real continua obrigatório. A evolução para a interface G4.3 não implica aprovação completa das operações de G4.2.
