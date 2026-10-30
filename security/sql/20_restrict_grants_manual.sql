@@ -63,7 +63,7 @@ BEGIN
   FROM unnest(ARRAY['admin_roles','app_settings','leads','customers',
     'service_orders','reminders','lead_rate_limits']) tname
   CROSS JOIN unnest(ARRAY['anon','authenticated']) role_name
-  CROSS JOIN unnest(ARRAY['TRUNCATE','TRIGGER','REFERENCES']) priv
+  CROSS JOIN unnest(ARRAY['TRUNCATE','TRIGGER','REFERENCES','MAINTAIN']) priv
   WHERE has_table_privilege(role_name,format('public.%I',tname),priv);
   IF bad IS NOT NULL THEN
     RAISE EXCEPTION 'ABORTADO: privilegios perigosos persistem: %',bad;
