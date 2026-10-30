@@ -134,3 +134,10 @@
 | G4.5-07 | Revisar CI, dependências, responsividade e evidências | Sem regressões; capturas sem dados pessoais | Pendente |
 
 **Regra de segurança:** não ativar `ready_for_real_data`, não habilitar cadastro público e não adicionar dados pessoais reais para obter evidências. Não executar testes destrutivos na base de produção. Registros de ensaio devem ocorrer somente em ambiente separado, sem usuários/clientes reais, com autorização explícita e possibilidade de limpeza.
+
+
+### Evidência de acesso anônimo — bloqueio do projeto Lovable (30/10/2026)
+
+O participante apresentou captura em **janela anônima** abrindo `lovable.dev`, com o aviso **You don't have access — This project is private**. Esse bloqueio corresponde à **permissão do projeto/editor ou prévia interna Lovable**, e **não** é prova do controle de acesso do ClimaCiclo nas rotas `/admin/*`.
+
+**Resultado G4.5-01:** **inconclusivo / pendente**. Para executar o teste sem publicar o aplicativo, usar **Share → Share preview → Create preview link** e abrir esse link temporário em janela anônima. A prévia compartilhada permite acesso à aplicação sem conceder acesso ao editor; testar as rotas administrativas sem sessão, observar o redirecionamento e ausência de dados, e revogar o link ao concluir. Os links de preview podem expor o app em desenvolvimento a qualquer pessoa que tenha a URL; não divulgar o link nem inserir dados pessoais reais. A prévia compartilha o mesmo backend do app publicado, segundo documentação da Lovable. Não alterar `ready_for_real_data=false` nem publicar o site por causa deste teste.
