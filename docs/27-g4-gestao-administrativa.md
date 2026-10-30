@@ -72,3 +72,15 @@
 - **Ainda pendente de teste funcional:** buscas com registros, abrir detalhes, atualizar notas, persistência após F5, acesso por usuário sem role e bloqueio da API/RLS.
 - Capturas compartilhadas na conversa, **ainda não anexadas à pasta `evidencias/` no GitHub**; não reproduzir dados pessoais na documentação.
 - O bloqueio de coleta real continua obrigatório. A evolução para a interface G4.3 não implica aprovação completa das operações de G4.2.
+
+
+## Implementação proposta G4.3 — Atendimentos (30/10/2026)
+
+- Página protegida `/admin/atendimentos` implementada via `admin_.atendimentos.tsx`, independente da rota de painel para evitar aninhamento indevido.
+- Lista atendimentos e permite filtrar por status (aberta, agendada manualmente, concluída e cancelada).
+- Formulário de novo atendimento exige cliente já cadastrado. Sem clientes, exibe aviso e não permite criar ordens; não gera cadastros fictícios.
+- O registro usa `createOrder`, a listagem `listOrders` e a alteração de status `updateOrder`. Todas são server functions sob `requireAdmin`.
+- Agendamento é apenas texto combinado manualmente, sem calendário externo; observações limitadas a 4.000 caracteres.
+- `ready_for_real_data` permanece inalterado; não há modificação do esquema do banco.
+
+**Aceite pendente:** revisão, CI e varredura de segurança, merge do PR, visualização autenticada no Lovable, estado vazio, confirmação de bloqueio anônimo e regressões. Persistência de criação e mudança de status só poderá ser aprovada quando houver cliente legítimo de teste de forma controlada. Não registrar dados reais de clientes para demonstrar a funcionalidade.
