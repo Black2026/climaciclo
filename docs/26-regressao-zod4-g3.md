@@ -74,3 +74,14 @@ O participante apresentou captura do **Lovable Cloud → Database → SQL editor
 5. Caso viável, validar conta autenticada sem role, acessos anônimos à API/RLS e ausência de dados privados na resposta.
 
 **Proteção:** manter `ready_for_real_data=false` e o envio real de leads desabilitado.
+
+
+## Teste G3-001 — login e painel exibido no Lovable (30/10/2026)
+
+Participante apresentou captura da prévia visual do Lovable após autenticação do primeiro operador com role `admin`. A tela **Painel do operador** foi exibida com o botão **Sair da conta**, contagens de banco com **0 novos leads, 0 leads, 0 clientes, 0 atendimentos abertos e 0 lembretes vencidos**, lista vazia com mensagem **Nenhuma solicitação registrada**, aviso **Recebimento de leads: bloqueado para dados reais** e **WhatsApp comercial: desabilitado**.
+
+**Conclusão de escopo:** acesso inicial ao painel administrativo **aprovado visualmente**, após habilitação de Email Authentication, bloqueio de cadastro público e atribuição da role no SQL Editor. A captura é evidência da renderização do painel, não prova por si só persistência da sessão após F5, revogação após logout nem rejeição de usuário sem role. Esses casos continuam pendentes.
+
+**Próximos testes:** (1) F5 em `/admin` e verificar se o painel permanece autenticado; (2) clicar **Sair da conta** e confirmar retorno ao login; (3) tentar abrir `/admin` sem sessão e validar redirecionamento; (4) se possível, validar uma conta sem role `admin` (sem conceder privilégio). Não registrar segredos ou dados pessoais nas evidências.
+
+**Segurança operacional:** manter `ready_for_real_data=false` e o botão de envio de solicitação real desabilitado. A imagem foi apresentada na conversa, mas não há indicação de upload à pasta `evidencias/` do GitHub.
