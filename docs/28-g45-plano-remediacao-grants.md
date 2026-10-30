@@ -76,3 +76,18 @@ Foi analisado o anexo `query-results-export-2026-10-30_12-13-23.csv`, gerado ao 
 **Resultado:** Consulta 2 **concluída e documentada**, sem alteração do banco. A Consulta 3, que verifica os privilégios EXECUTE das funções, ainda falta. O script `20_restrict_grants_manual.sql` **não está autorizado a executar no Lovable Cloud**; a CI usa uma fixture simplificada e não substitui avaliação com o ambiente real.
 
 **Nota:** CSV de origem foi entregue na conversa; não afirmar que os bytes foram anexados ao GitHub.
+
+
+### Preflight 3 — privilégios EXECUTE (CSV 30/10/2026 12:15)
+
+CSV `query-results-export-2026-10-30_12-15-51.csv` analisado: três funções, sem identificação pessoal.
+
+| Função | SECURITY DEFINER | anon EXECUTE | authenticated EXECUTE | service_role EXECUTE |
+|---|---|---|---|---|
+| `convert_lead_to_customer(uuid)` | false | false | true | true |
+| `has_role(uuid,app_role)` | true | false | true | true |
+| `submit_lead(...)` (15 parâmetros) | true | false | false | true |
+
+O resultado **corresponde às concessões declaradas na migração original**. `has_role` é security definer para permitir checagem de role sob RLS; `convert_lead_to_customer` é security invoker e valida a role admin; `submit_lead` usa security definer e restringe EXECUTE a service_role. Não se identificou EXECUTE anônimo nessas três funções. Ainda é necessário validar diretamente o bloqueio de funções com token de usuário sem role e revisão da lógica/ownership de SECURITY DEFINER antes da homologação completa.
+
+**Compatibilidade do ensaio:** CSV de ACL anterior apresentou `MAINTAIN`. Por isso o workflow de PostgreSQL descartável foi ajustado de 16 para **17** e ampliado para testar retirada explícita de `MAINTAIN` em `anon` e `authenticated`. A aprovação anterior em PostgreSQL 16 não cobre esse privilégio. **Aguardar execução do novo workflow**; nenhum comando de revogação foi aplicado no Lovable Cloud.
