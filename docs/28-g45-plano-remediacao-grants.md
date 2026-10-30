@@ -160,3 +160,12 @@ O participante enviou captura da tela **More → Database → Backups** do proje
 **Evidência comprovada:** a interface mostra três backups e os controles `Restore to this backup`. **Não foi testada a integridade ou a restauração** de qualquer um, nem demonstrada uma exportação independente. Restaurar pode reverter **schema e dados** ao ponto escolhido e descartar mudanças posteriores. **Nenhuma restauração foi solicitada nem executada.**
 
 **Condição de segurança antes da remediação real:** exportar banco para cópia independente e preservá-la fora do GitHub; verificar a integridade do arquivo e obter procedimento de recuperação autorizado. A exportação de banco pode incluir autenticação e dados sensíveis, portanto não publicar nem enviar o dump no chat. Backups agendados e exportação independente são proteções complementares: a existência dos três backups na UI não equivale à confirmação de recuperação. Ainda não executar `20_restrict_grants_manual.sql`, especialmente porque a correção de ACL padrão para objetos futuros segue pendente.
+
+
+### Captura de Database settings — exportação disponível (30/10/2026)
+
+Captura fornecida pelo participante da tela **Database settings** do Lovable Cloud demonstra que existe a seção `Export project data` com botão `Export data`, bem como a identificação PostgreSQL 17.11.0.003, região US West (Oregon) e armazenamento utilizado aproximado de 0,27 GB.
+
+**Comprovado pela captura:** a opção de solicitar exportação está visível. **Não comprovado:** clique no botão, conclusão da exportação, existência do arquivo, conteúdo/abrangência dos objetos exportados, integridade ou possibilidade de restaurá-lo. A exportação deve permanecer privada e não deve ser carregada no GitHub ou enviada na conversa, pois pode conter dados de autenticação. A presença de três backups da plataforma foi documentada anteriormente, mas não houve ensaio de restauração.
+
+**Próxima evidência:** confirmação sem dados sensíveis de que a exportação gerou arquivo e foi armazenada com segurança. Validar escopo (dados/esquema/grants) e plano de reversão antes da execução supervisionada de SQL de remediação. Nenhuma alteração no banco ocorreu nesta etapa.
