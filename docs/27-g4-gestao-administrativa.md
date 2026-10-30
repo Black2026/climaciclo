@@ -141,3 +141,16 @@
 O participante apresentou captura em **janela anônima** abrindo `lovable.dev`, com o aviso **You don't have access — This project is private**. Esse bloqueio corresponde à **permissão do projeto/editor ou prévia interna Lovable**, e **não** é prova do controle de acesso do ClimaCiclo nas rotas `/admin/*`.
 
 **Resultado G4.5-01:** **inconclusivo / pendente**. Para executar o teste sem publicar o aplicativo, usar **Share → Share preview → Create preview link** e abrir esse link temporário em janela anônima. A prévia compartilhada permite acesso à aplicação sem conceder acesso ao editor; testar as rotas administrativas sem sessão, observar o redirecionamento e ausência de dados, e revogar o link ao concluir. Os links de preview podem expor o app em desenvolvimento a qualquer pessoa que tenha a URL; não divulgar o link nem inserir dados pessoais reais. A prévia compartilha o mesmo backend do app publicado, segundo documentação da Lovable. Não alterar `ready_for_real_data=false` nem publicar o site por causa deste teste.
+
+
+### Nova evidência G4.5-01 — prévia anônima do aplicativo (30/10/2026)
+
+O participante apresentou **duas capturas de navegador em modo anônimo** abrindo a prévia do aplicativo ClimaCiclo (diferente da interface privada de edição Lovable):
+- A landing pública é exibida com o aviso **Em preparação: ainda não recebemos solicitações** e CTA para o formulário.
+- Uma tela intitulada **Entrar — Operador** apresenta **Área do operador**, campos de e-mail/senha e botão **Entrar**, sem contadores de leads, clientes ou outros dados do painel. A imagem foi fornecida como retorno do teste de acesso sem sessão a `/admin`; a barra de endereço não mostra claramente o caminho completo, portanto a captura é **compatível** com o redirecionamento esperado, mas não comprova o acesso direto a todas as rotas.
+
+**Resultado parcial:** aplicativo acessível em prévia anônima; login administrativo exibido sem dados privados. O G4.5-01 segue **parcial / pendente**, pois faltam evidências de navegação direta anônima para `/admin/leads`, `/admin/clientes`, `/admin/atendimentos` e `/admin/lembretes` e ausência de dados administrativos em cada caso. Não confundir o bloqueio de editor do Lovable do teste anterior com a autorização do aplicativo.
+
+**Próximo teste:** na mesma janela anônima e sem iniciar sessão, substituir apenas o caminho na URL da prévia por cada rota acima, confirmar redirecionamento ao formulário de login e inexistência de dados privados; registrar sem dados pessoais ou tokens. Nenhum teste de RLS direto foi realizado por essas capturas. O bloqueio de coleta real deve permanecer ativo.
+
+**Evidências:** capturas apresentadas na conversa; upload de PNGs para o GitHub ainda não verificado.
