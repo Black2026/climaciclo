@@ -122,3 +122,10 @@ Resumo exato das associações diretas (`papel` = membro, `papel_herdado` = pape
 **Interpretação:** nenhum registro contém `anon`, `authenticated`, `service_role` ou `sandbox_exec` como **membro** de outra role, portanto não aparece herança de grants de terceiros por essas quatro roles no conjunto consultado. O fato de `authenticator` e `supabase_realtime_admin` poderem `SET ROLE` para as roles de API **não implica** que essas roles possam assumir `authenticator` ou `supabase_realtime_admin`; as associações são direcionais. O `postgres` tem associação a `sandbox_exec` sem `INHERIT` e sem `SET`. Nenhuma dessas associações deve ser alterada durante esta remediação.
 
 **Status:** primeira consulta do diagnóstico complementar **concluída**, sem sinal de grants herdados para `anon`/`authenticated`. Permanecem pendentes as consultas de USAGE/CREATE no schema `public` e de privilégios padrão (default ACL), além de backup verificado e aplicação supervisionada da correção. O script de remediação NÃO foi aplicado. O PR #13 segue em rascunho.
+
+
+### Diagnóstico complementar — privilégios no esquema public (CSV 12:33)
+
+Arquivo exportado `query-results-export-2026-10-30_12-33-00.csv` (30/10/2026), verificado localmente: **quatro linhas**, com `pode_criar_no_schema=false` e `pode_usar_schema=true` para `anon`, `authenticated`, `sandbox_exec` e `service_role`.
+
+**Avaliação:** não há privilégio efetivo `CREATE` no esquema `public` para esses quatro papéis. `USAGE` não concede sozinho acesso a linhas ou criação de objetos. Essa verificação é positiva mas não corrige grants de tabela excessivos. **Pendente:** terceira consulta de `security/sql/15_preflight_roles_read_only.sql` relativa a `pg_default_acl`, e confirmação de backup restaurável antes de executar remediação. A consulta atual não modificou o banco e o PR #13 continua em rascunho.
