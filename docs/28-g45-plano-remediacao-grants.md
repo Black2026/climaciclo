@@ -39,3 +39,24 @@ A migração original `drizzle/migrations/0000_migration.sql` descreve privilég
 O workflow `.github/workflows/g45-grants-isolado.yml` inicia um PostgreSQL 16 **efêmero**, sem acesso ao Lovable Cloud. Usa `security/sql/test_fixture_isolated.sql` para criar sete tabelas de teste, RLS habilitado, `ready_for_real_data=false` e grants intencionalmente excessivos. Valida: estado inseguro reproduzido; guarda aborta se há grant a `PUBLIC` e mantém privilégios originais após o rollback; remediação transacional retira TRUNCATE de `anon`/`authenticated`; `service_role` mantém privilégios; flag false; e segunda aplicação não falha (idempotência).
 
 **Limite:** a fixture é simplificada e não substitui a migração completa do projeto, nem prova compatibilidade de todas as funções com Lovable Cloud. Além do CI verde, a aplicação real exige preflight e aprovação de um responsável. Não mesclar ou executar por inferência automática.
+
+
+### Preflight 1 — proprietários, RLS e ACLs (CSV 30/10/2026 12:09)
+
+O participante anexou `query-results-export-2026-10-30_12-09-12.csv`, exportado após executar **somente a primeira consulta** de `security/sql/10_preflight_read_only.sql`. Arquivo delimitado por ponto e vírgula, 7 linhas, sem entradas ausentes:
+
+| Tabela | Proprietário | RLS | ACL |
+|---|---|---|---|
+| `admin_roles` | `postgres` | true | compartilhada entre as sete |
+| `app_settings` | `postgres` | true | idem |
+| `customers` | `postgres` | true | idem |
+| `lead_rate_limits` | `postgres` | true | idem |
+| `leads` | `postgres` | true | idem |
+| `reminders` | `postgres` | true | idem |
+| `service_orders` | `postgres` | true | idem |
+
+ACL original em todas: `{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,sandbox_exec=ar/postgres}`.
+
+**Constatações:** as sete tabelas mantêm RLS ativado, proprietário `postgres`; os grants diretos e excessivos para `anon` e `authenticated` foram confirmados na ACL original. Nenhuma entrada explícita com beneficiário `PUBLIC` (formato `=...`) aparece nesse resultado. Existe a role adicional `sandbox_exec` com `INSERT` e `SELECT`; investigar sua finalidade, eventuais memberships e o alcance prático do RLS, sem modificar a role. Este CSV é evidência do **estado anterior à correção**, não da execução do script.
+
+**Status:** preflight 1 concluído e revisado. Pendente preflight 2 (ACLs decompostas, concessões `PUBLIC`), preflight 3 (EXECUTE de funções), backup e teste mais representativo do banco real antes de aplicar `20_restrict_grants_manual.sql`. Não marcar G4.5-03 como homologado. Não ativar `ready_for_real_data`.
