@@ -84,3 +84,16 @@
 - `ready_for_real_data` permanece inalterado; não há modificação do esquema do banco.
 
 **Aceite pendente:** revisão, CI e varredura de segurança, merge do PR, visualização autenticada no Lovable, estado vazio, confirmação de bloqueio anônimo e regressões. Persistência de criação e mudança de status só poderá ser aprovada quando houver cliente legítimo de teste de forma controlada. Não registrar dados reais de clientes para demonstrar a funcionalidade.
+
+
+## Homologação visual G4.3 — Atendimentos (30/10/2026)
+
+- O [PR #11](https://github.com/Black2026/climaciclo/pull/11) foi **mesclado** em `main` (commit `ff15f41a3317bccafcd43172b8e0a4d1377b6583`); a [CI após merge](https://github.com/Black2026/climaciclo/actions/runs/41065465332) concluiu com sucesso.
+- Três capturas do participante mostram o painel `/admin` com o link **Gerenciar atendimentos** e a rota `/admin/atendimentos` com título **Gestão de atendimentos**, seção **Novo atendimento**, tabela **Atendimentos cadastrados** e filtro de status.
+- O seletor apresenta as opções: **Todos**, **aberta**, **agendada manual**, **concluída**, **cancelada**. O texto **Nenhum cliente cadastrado. A criação de atendimentos estará disponível depois que houver um cliente legítimo no banco** é exibido corretamente; a tabela indica **Nenhum atendimento encontrado**.
+- **Aprovado visualmente:** navegação, renderização da página, estado sem clientes/atendimentos, opções de filtro e bloqueio da criação sem cliente existente.
+- **Ainda não testado:** execução dos filtros com ordens existentes, criação/alteração de atendimento no banco, persistência após F5, negação a usuário autenticado sem `admin` e testes diretos de RLS. Estas capturas **não comprovam CRUD completo**.
+- As capturas estão na conversa, mas o upload dos PNGs em `evidencias/` ainda não foi verificado. Não inserir dados pessoais nem clientes fictícios na homologação de interface.
+- A coleta real de leads e o WhatsApp comercial continuam desativados conforme capturas. `ready_for_real_data=false` permanece requisito obrigatório para os próximos Gates.
+
+**Próximo Gate:** G4.4 — lembretes, mantendo a API de gestão protegida e o processo de PR + CI + revisão + teste visual.
