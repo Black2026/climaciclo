@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 10
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: climaciclo_isolado
@@ -41,6 +41,7 @@ jobs:
         run: |
           psql -v ON_ERROR_STOP=1 -Atc "SELECT has_table_privilege('anon','public.leads','TRUNCATE')" | grep -qx t
           psql -v ON_ERROR_STOP=1 -Atc "SELECT has_table_privilege('authenticated','public.app_settings','TRIGGER')" | grep -qx t
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT has_table_privilege('anon','public.leads','MAINTAIN') AND has_table_privilege('authenticated','public.leads','MAINTAIN')" | grep -qx t
       - name: Negativo - grant PUBLIC impede aplicacao
         run: |
           psql -v ON_ERROR_STOP=1 -c "GRANT SELECT ON public.leads TO PUBLIC"
@@ -55,7 +56,7 @@ jobs:
         run: |
           psql -v ON_ERROR_STOP=1 -f security/sql/20_restrict_grants_manual.sql
           psql -v ON_ERROR_STOP=1 -f security/sql/30_postflight_read_only.sql >/tmp/postflight.txt
-          psql -v ON_ERROR_STOP=1 -Atc "SELECT bool_and(NOT has_table_privilege('anon',format('public.%I',t),'TRUNCATE') AND NOT has_table_privilege('authenticated',format('public.%I',t),'TRUNCATE')) FROM unnest(ARRAY['admin_roles','app_settings','leads','customers','service_orders','reminders','lead_rate_limits']) t" | grep -qx t
+          psql -v ON_ERROR_STOP=1 -Atc "SELECT bool_and(NOT has_table_privilege('anon',format('public.%I',t),'TRUNCATE') AND NOT has_table_privilege('authenticated',format('public.%I',t),'TRUNCATE') AND NOT has_table_privilege('anon',format('public.%I',t),'MAINTAIN') AND NOT has_table_privilege('authenticated',format('public.%I',t),'MAINTAIN')) FROM unnest(ARRAY['admin_roles','app_settings','leads','customers','service_orders','reminders','lead_rate_limits']) t" | grep -qx t
           psql -v ON_ERROR_STOP=1 -Atc "SELECT NOT has_table_privilege('anon','public.leads','SELECT') AND has_table_privilege('authenticated','public.leads','SELECT') AND has_table_privilege('service_role','public.leads','TRUNCATE')" | grep -qx t
           psql -v ON_ERROR_STOP=1 -Atc "SELECT ready_for_real_data FROM public.app_settings WHERE id=1" | grep -qx f
       - name: Idempotencia da remediacao
