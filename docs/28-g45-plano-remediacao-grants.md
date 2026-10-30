@@ -32,3 +32,10 @@ A migração original `drizzle/migrations/0000_migration.sql` descreve privilég
 ## Resultado esperado x estado atual
 
 **Preparado:** proposta de remediação e scripts de diagnóstico. **Ainda não comprovado:** execução em ambiente isolado, testes integrados, aplicação ao Lovable Cloud e pós-validação de privilégios. Gate G4.5-03 permanece **bloqueado** até esses passos. Branch e PR não alteram automaticamente o banco.
+
+
+## Ensaio automatizado adicional (branch)
+
+O workflow `.github/workflows/g45-grants-isolado.yml` inicia um PostgreSQL 16 **efêmero**, sem acesso ao Lovable Cloud. Usa `security/sql/test_fixture_isolated.sql` para criar sete tabelas de teste, RLS habilitado, `ready_for_real_data=false` e grants intencionalmente excessivos. Valida: estado inseguro reproduzido; guarda aborta se há grant a `PUBLIC` e mantém privilégios originais após o rollback; remediação transacional retira TRUNCATE de `anon`/`authenticated`; `service_role` mantém privilégios; flag false; e segunda aplicação não falha (idempotência).
+
+**Limite:** a fixture é simplificada e não substitui a migração completa do projeto, nem prova compatibilidade de todas as funções com Lovable Cloud. Além do CI verde, a aplicação real exige preflight e aprovação de um responsável. Não mesclar ou executar por inferência automática.
