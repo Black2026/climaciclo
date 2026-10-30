@@ -166,7 +166,6 @@ evidencias/
 
 ## 11. Fontes e referências
 
-- **Enunciado oficial do desafio:** texto apresentado pelo participante na plataforma DIO; define os requisitos obrigatórios deste projeto.
 - ABRAVA — [panorama AVACR, faturamento de 2025](https://abrava.com.br/setor-de-ventilacao-ar-condicionado-e-refrigeracao-no-brasil-teve-faturamento-da-ordem-de-r-5015-bilhoes-em-2025/).
 - IBGE — [Censo 2022, domicílios](https://www.ibge.gov.br/biblioteca/visualizacao/livros/liv102011.pdf) e [recorte municipal](https://www.ibge.gov.br/biblioteca/visualizacao/livros/liv102170.pdf).
 - Lovable — [Git sync com GitHub](https://docs.lovable.dev/integrations/github), [Lovable Cloud](https://docs.lovable.dev/features/cloud), [Plan Mode](https://docs.lovable.dev/features/plan-mode) e [Security](https://docs.lovable.dev/features/security-view).
