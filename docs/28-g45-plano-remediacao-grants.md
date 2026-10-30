@@ -91,3 +91,10 @@ CSV `query-results-export-2026-10-30_12-15-51.csv` analisado: três funções, s
 O resultado **corresponde às concessões declaradas na migração original**. `has_role` é security definer para permitir checagem de role sob RLS; `convert_lead_to_customer` é security invoker e valida a role admin; `submit_lead` usa security definer e restringe EXECUTE a service_role. Não se identificou EXECUTE anônimo nessas três funções. Ainda é necessário validar diretamente o bloqueio de funções com token de usuário sem role e revisão da lógica/ownership de SECURITY DEFINER antes da homologação completa.
 
 **Compatibilidade do ensaio:** CSV de ACL anterior apresentou `MAINTAIN`. Por isso o workflow de PostgreSQL descartável foi ajustado de 16 para **17** e ampliado para testar retirada explícita de `MAINTAIN` em `anon` e `authenticated`. A aprovação anterior em PostgreSQL 16 não cobre esse privilégio. **Aguardar execução do novo workflow**; nenhum comando de revogação foi aplicado no Lovable Cloud.
+
+
+### Revisão adicional para execução no Lovable (30/10/2026)
+
+Após inspecionar os resultados, foi ampliada a verificação de pós-condições em `20_restrict_grants_manual.sql` para também rejeitar `MAINTAIN` em `anon`/`authenticated`, além de `TRUNCATE`, `REFERENCES` e `TRIGGER`. O teste com PostgreSQL 17 é a referência para a versão que oferece esse privilégio. Foi criado `security/sql/15_preflight_roles_read_only.sql`, que consulta memberships/herança de papéis, privilégios sobre o esquema `public` e ACLs padrão para novos objetos. **Esses resultados do Lovable Cloud ainda não foram recebidos.**
+
+**Critérios mínimos antes de aplicar no Lovable:** conferir esses três resultados, ter backup/snapshot restaurável verificado e responsável autorizado para execução, revisar eventuais grants herdados, e confirmar a flag `ready_for_real_data=false`. Em seguida, executar a correção de forma supervisionada e produzir `30_postflight_read_only.sql`, além dos testes de regressão. A aprovação do workflow isolado não dispensa esses procedimentos; nenhuma modificação remota foi realizada nesta revisão.
