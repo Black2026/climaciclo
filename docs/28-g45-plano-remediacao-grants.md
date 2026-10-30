@@ -169,3 +169,10 @@ Captura fornecida pelo participante da tela **Database settings** do Lovable Clo
 **Comprovado pela captura:** a opção de solicitar exportação está visível. **Não comprovado:** clique no botão, conclusão da exportação, existência do arquivo, conteúdo/abrangência dos objetos exportados, integridade ou possibilidade de restaurá-lo. A exportação deve permanecer privada e não deve ser carregada no GitHub ou enviada na conversa, pois pode conter dados de autenticação. A presença de três backups da plataforma foi documentada anteriormente, mas não houve ensaio de restauração.
 
 **Próxima evidência:** confirmação sem dados sensíveis de que a exportação gerou arquivo e foi armazenada com segurança. Validar escopo (dados/esquema/grants) e plano de reversão antes da execução supervisionada de SQL de remediação. Nenhuma alteração no banco ocorreu nesta etapa.
+
+
+### Evidência de arquivo exportado no bucket privado (30/10/2026)
+
+Nova captura do participante mostra **um arquivo** dentro do bucket privado `database_export_30_10_26`, com nome extenso de identificador parcialmente visível, **401 KB**, tipo MIME `application/octet-stream`, última modificação cerca de quatro minutos antes da captura. A captura confirma a existência do objeto, mas **não prova download, integridade, formato, cobertura de schema/grants ou restauração testada**.
+
+Próximo passo: selecionar o arquivo no Storage e usar Download para guardar cópia independente em local privado, sem enviar o dump ao GitHub ou à conversa. Conforme documentação Lovable, os arquivos podem ser baixados selecionando o item, e backups armazenados em buckets privados usam links temporários. Evitar expor links assinados e conferir o tamanho após download. Reversão continua não validada; não executar o SQL de remediação no Lovable enquanto não houver verificação de recuperação.
