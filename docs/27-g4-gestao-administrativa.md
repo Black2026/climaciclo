@@ -218,3 +218,22 @@ Arquivo CSV exportado pelo participante (`query-results-export-2026-10-30_11-36-
 **Resultado:** inspeção das expressões RLS **aprovada**, sem política excessivamente permissiva identificada no CSV. Isso **não comprova sozinho** a segurança efetiva: continuam pendentes verificação dos GRANTs e EXECUTEs vigentes, comportamento de `SECURITY DEFINER`, testes negativos diretos na API com conta sem role, e isolamento efetivo dos dados. A migração versionada `drizzle/migrations/0000_migration.sql` prevê `grant select,insert,update,delete` a `authenticated` nas tabelas operacionais, mas o RLS condiciona as linhas à role administrativa. O arquivo de migração não garante que o esquema implantado esteja idêntico.
 
 **Próxima consulta indicada:** listar privilégios efetivos do banco (somente leitura), especialmente `anon` e `authenticated`, e permissões de execução das funções sensíveis. Não modificar `ready_for_real_data`, não desativar RLS, não adicionar políticas nem inserir registros.
+
+
+### G4.5-03 — ALERTA: privilégios amplos em sete tabelas (30/10/2026)
+
+**Evidência:** CSV `query-results-export-2026-10-30_11-40-12.csv` encaminhado pelo participante (arquivo da conversa; upload ao GitHub não comprovado). Export `;`-delimitado, com **21 linhas**: 7 tabelas × papéis `anon`, `authenticated` e `service_role`. Em **todas as combinações**, o campo `privilegios` lista `DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE`.
+
+**Avaliação de risco:** `anon` e `authenticated` aparecem com permissões amplas inclusive de `TRUNCATE`, `REFERENCES` e `TRIGGER`, nas tabelas `admin_roles`, `app_settings`, `customers`, `lead_rate_limits`, `leads`, `reminders` e `service_orders`. **TRUNCATE e REFERENCES não são restringidos por RLS**, conforme documentação oficial do PostgreSQL: https://www.postgresql.org/docs/17/ddl-rowsecurity.html . A documentação da Supabase também alerta que padrões de GRANT em tabelas `public` podem ser amplos e exigem REVOKE explícito: https://supabase.com/docs/guides/database/postgres/row-level-security . Isso representa potencial exposição para sessões com capacidade de executar SQL, e não prova que exista endpoint HTTP que permita TRUNCATE ou que dados tenham sido acessados indevidamente.
+
+**Comparação:** o arquivo `drizzle/migrations/0000_migration.sql` registra intenção de GRANTs mais restritos (`admin_roles` apenas SELECT de `authenticated`; `app_settings` SELECT/UPDATE; `lead_rate_limits` somente `service_role`). O CSV sugere diferença entre o esquema esperado e os privilégios efetivos atuais. As 19 políticas RLS podem limitar SELECT/INSERT/UPDATE/DELETE por linha, mas **não neutralizam TRUNCATE**.
+
+**Status:** achado de alta prioridade; **G4.5-03 bloqueado para homologação final**. Não publicar recepção real de leads, não mudar `ready_for_real_data`, não executar comandos `TRUNCATE`, nem presumir que o alerta seja um ataque confirmado.
+
+**Próximos passos controlados:**
+1. Confirmar acesso efetivo com `has_table_privilege('anon', 'public.<tabela>', 'TRUNCATE')` e equivalente para `authenticated`, além de `REFERENCES`/`TRIGGER` e `SELECT`.
+2. Planejar, revisar e aplicar com responsável um ajuste de menor privilégio via REVOKE/GRANT explícitos, preservando os acessos estritamente necessários do ClimaCiclo e do `service_role`. Conferir também concessões herdadas via `PUBLIC`, se existirem.
+3. Reexecutar as consultas e os testes de regressão da landing, login, painel, RLS e bloqueio de lead real. Investigar privilégios EXECUTE das funções `has_role`, `submit_lead` e `convert_lead_to_customer`.
+4. Registrar resultados e evidências antes de considerar G4.5-03 aprovado.
+
+**Nenhuma permissão foi alterada nesta etapa:** apenas análise CSV e documentação de risco.
