@@ -37,3 +37,12 @@ Os workflows de CI pós-merge e a revisão de dependências Lovable já haviam s
 **Operações dependentes do responsável:** criar conta admin no painel Users do Lovable Cloud e inserir role no SQL Editor usando o ID de usuário confirmado, com consulta prévia. Nunca publicar senha, token ou e-mail real em captura ou repositório.
 
 **Segurança:** `ready_for_real_data=false` continua como último estado inspecionado; não habilitar envio nem preencher dados pessoais reais para homologação de UI.
+
+
+## Teste visual preliminar G3 — 30/10/2026
+
+O participante apresentou captura do Lovable em **Visualização** com o seletor no topo indicando `/admin/login`, porém o conteúdo renderizado aparece como **Painel do operador** com `Verificando autorização...` e botão `Sair da conta`. No código da `main`, `src/routes/admin.login.tsx` contém o formulário de login, enquanto `src/routes/admin.tsx` contém precisamente a mensagem de autorização. Assim, a imagem é **inconclusiva** para os critérios de aceite de login: pode ser transição de rota, seleção/navegação ainda não concluída, cache da prévia ou problema de roteamento. Não afirmar que o login funcionou nem que há vulnerabilidade comprovada.
+
+**Roteiro seguro de reprodução:** atualizar a visualização, abrir `/admin/login` diretamente sem dados pessoais, confirmar que aparece o formulário `E-mail / Senha / Entrar`; tentar `/admin` sem sessão e confirmar redirecionamento à tela de login; se persistir tela `Verificando autorização...` por tempo prolongado, registrar erro de console e falha de requisição sem tokens/senhas e corrigir em branch isolada. O arquivo `src/routeTree.gen.ts` versionado aparenta estar desatualizado, pois inclui somente rotas `/` e `/privacidade`; o CI recompila/gera a árvore automaticamente. Conferir se a prévia do Lovable gerou as rotas novas.
+
+**Estado G3:** implementado no GitHub (PR #6 mesclado), ainda **não homologado na interface**. Os critérios de acesso anônimo, permissão administrativa e logout permanecem pendentes. Não habilitar `ready_for_real_data`.
