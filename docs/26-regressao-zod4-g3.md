@@ -46,3 +46,12 @@ O participante apresentou captura do Lovable em **Visualização** com o seletor
 **Roteiro seguro de reprodução:** atualizar a visualização, abrir `/admin/login` diretamente sem dados pessoais, confirmar que aparece o formulário `E-mail / Senha / Entrar`; tentar `/admin` sem sessão e confirmar redirecionamento à tela de login; se persistir tela `Verificando autorização...` por tempo prolongado, registrar erro de console e falha de requisição sem tokens/senhas e corrigir em branch isolada. O arquivo `src/routeTree.gen.ts` versionado aparenta estar desatualizado, pois inclui somente rotas `/` e `/privacidade`; o CI recompila/gera a árvore automaticamente. Conferir se a prévia do Lovable gerou as rotas novas.
 
 **Estado G3:** implementado no GitHub (PR #6 mesclado), ainda **não homologado na interface**. Os critérios de acesso anônimo, permissão administrativa e logout permanecem pendentes. Não habilitar `ready_for_real_data`.
+
+
+## Correção homologada: rota de login — 30/10/2026
+
+- PR [#7](https://github.com/Black2026/climaciclo/pull/7) foi integrado à `main` no commit `46ee36e817b5dc3236ec8be6a8be2a87cd28ae40`.
+- Causa corrigida: `admin.login.tsx` era tratado como filho de `admin.tsx` (rota pai sem `Outlet`). Arquivo alterado para `src/routes/admin_.login.tsx` e identificador de rota `/admin_/login`, mantendo URL `/admin/login` sem aninhamento.
+- Participante apresentou **captura da Visualização Lovable mostrando o formulário correto de Área do operador**, campos E-mail/Senha, botão Entrar e aviso de acesso exclusivo. A mensagem `Verificando autorização...` não aparece nessa página. **Correção visual homologada.**
+- **Ainda pendente:** criação segura da primeira conta de operador no Cloud (Users); concessão da role `admin` por operação restrita no SQL Editor, testes de autenticação efetiva, rejeição de usuário sem role, acesso anônimo, F5 e logout. Não há evidência de login efetivo; nenhuma credencial deve ser registrada no repositório ou em captura.
+- A coleta `ready_for_real_data` deve permanecer bloqueada enquanto G2, G3 e privacidade não estiverem homologados.
