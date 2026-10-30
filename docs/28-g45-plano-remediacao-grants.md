@@ -129,3 +129,19 @@ Resumo exato das associações diretas (`papel` = membro, `papel_herdado` = pape
 Arquivo exportado `query-results-export-2026-10-30_12-33-00.csv` (30/10/2026), verificado localmente: **quatro linhas**, com `pode_criar_no_schema=false` e `pode_usar_schema=true` para `anon`, `authenticated`, `sandbox_exec` e `service_role`.
 
 **Avaliação:** não há privilégio efetivo `CREATE` no esquema `public` para esses quatro papéis. `USAGE` não concede sozinho acesso a linhas ou criação de objetos. Essa verificação é positiva mas não corrige grants de tabela excessivos. **Pendente:** terceira consulta de `security/sql/15_preflight_roles_read_only.sql` relativa a `pg_default_acl`, e confirmação de backup restaurável antes de executar remediação. A consulta atual não modificou o banco e o PR #13 continua em rascunho.
+
+
+### Diagnóstico complementar — ACL padrão para objetos futuros (CSV 12:35)
+
+CSV `query-results-export-2026-10-30_12-35-45.csv` efetivamente inspecionado: **6 linhas**, todas no esquema `public`, para proprietários `postgres` e `supabase_admin`, cada um com três tipos de objeto: `r` (tabelas), `S` (sequências) e `f` (funções).
+
+- **Tabelas futuras (`r`)**: para ambos proprietários, `anon` e `authenticated` recebem ACL `arwdDxtm` — SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER e MAINTAIN; `service_role` também recebe amplo acesso. Para `postgres`, `sandbox_exec=ar` (INSERT, SELECT).
+- **Sequências futuras (`S`)**: `anon` e `authenticated` recebem `rwU` (SELECT, UPDATE, USAGE) em ambos proprietários. Para `postgres`, `sandbox_exec=rU` (SELECT, USAGE).
+- **Funções futuras (`f`)**: `anon` e `authenticated` recebem `X` (EXECUTE) por padrão em ambos proprietários, assim como `service_role`.
+- Não foi observada nenhuma ACL padrão global `(global)` nesse arquivo; todas as linhas são específicas de `public`. Isso **não substitui** a checagem das permissões normais globais de funções e os privilégios de objetos já existentes.
+
+**Risco:** após a correção das sete tabelas atuais, criações futuras pelo `postgres` ou `supabase_admin` voltariam a conceder acesso amplo a `anon`/`authenticated` se esses defaults persistirem. Rotinas criadas futuramente podem ficar executáveis por papéis de API; `SECURITY DEFINER` exigiria cuidado adicional. **A correção atual `20_restrict_grants_manual.sql` não modifica default ACLs.**
+
+**Tratamento recomendado:** preparar uma segunda migração/manual SQL específica de `ALTER DEFAULT PRIVILEGES FOR ROLE ... IN SCHEMA public REVOKE ...`, revisando separadamente tabelas, sequências e funções, a política de grants do Lovable/Supabase e o impacto nas operações futuras e nas roles da plataforma. O executor deve ter autoridade para alterar default privileges dos dois proprietários. Alterações de default ACL **não removem** privilégios de objetos atuais, por isso não substituem `20_restrict_grants_manual.sql`. Não executar no Lovable antes de backup restaurável e revisão do fornecedor/operador. Documentar consulta de pós-verificação e testes de criação de objetos novos **somente em ambiente isolado**.
+
+**Gate:** diagnóstico de default ACL concluído; remediação completa e homologação de segurança **pendentes**. Não declarar o desafio finalizado operacionalmente; captação real segue desativada.
