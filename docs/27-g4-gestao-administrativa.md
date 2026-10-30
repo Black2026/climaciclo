@@ -170,3 +170,14 @@ O participante confirmou, após teste na janela anônima da prévia do ClimaCicl
 A captura anterior já mostrava a tela de login na prévia anônima em vez do painel. **G4.5-01 aprovado no escopo da navegação/controle visual segundo confirmação do participante**. Nenhum teste de chamada direta das funções de servidor, políticas RLS ou permissão de usuário autenticado sem role foi demonstrado; esses cenários seguem pendentes (G4.5-02 e G4.5-03). Os resultados foram relatados em conversa, sem novas capturas individuais publicadas no repositório.
 
 **Próximo passo:** criar manualmente uma conta de teste autorizada, sem atribuir `admin`, mantendo cadastro público desativado, e comprovar negação de acesso à área administrativa após autenticação. Não alterar a role do administrador existente nem `ready_for_real_data=false`. Remover a conta de teste depois da homologação.
+
+
+### G4.5-02 — bloqueio de conta autenticada sem role admin (30/10/2026)
+
+O participante criou uma segunda conta de teste sem atribuir role `admin` e realizou teste em janela anônima da prévia do ClimaCiclo. Captura fornecida mostra a página **Área do operador** com mensagem explícita, em vermelho: **"Sem permissão: esta conta não possui o papel de administrador."** O dashboard e seus dados não são apresentados.
+
+**Conclusão:** G4.5-02 **aprovado no escopo do fluxo visual de login/negação de role**, de acordo com teste manual e captura. Essa evidência não equivale a teste direto de endpoints e RLS, que continua pendente em G4.5-03. A conta testada e qualquer senha/e-mail ficam fora da documentação. A captura está na conversa, mas o upload do PNG ao GitHub não foi verificado.
+
+**Próxima etapa:** inspeção somente leitura de configuração RLS e políticas de `public.admin_roles`, `public.leads`, `public.customers`, `public.service_orders`, `public.reminders`, `public.app_settings` e `public.lead_rate_limits`. Uma inspeção de metadados não substitui ensaio com credenciais de usuário comum, com verificação de rejeição das operações no servidor. Evitar executar `SET ROLE`, desligar RLS, modificar políticas ou testar mutações na base operacional.
+
+**Após os testes:** remover a segunda conta de teste, sem apagar a conta administradora, e registrar a revogação.
