@@ -1,17 +1,11 @@
 import type { PublicSummary } from "./lead-schema";
 
-type Confirmation = { code: string; summary: PublicSummary };
+/** In-memory only (lost on reload by design): non-sensitive summary handed to the confirmation page. */
+let last: { code: string; summary: PublicSummary } | null = null;
 
-// Browser-only transient state. The server never stores one visitor's summary
-// in a process-global variable shared with other requests.
-let last: Confirmation | null = null;
-
-export function setConfirmation(value: Confirmation) {
-  if (typeof window === "undefined") return;
-  last = value;
+export function setConfirmation(v: { code: string; summary: PublicSummary }) {
+  last = v;
 }
-
-export function readConfirmation(code: string): Confirmation | null {
-  if (typeof window === "undefined") return null;
-  return last?.code === code ? last : null;
+export function readConfirmation(code: string) {
+  return last && last.code === code ? last : null;
 }

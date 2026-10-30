@@ -87,11 +87,7 @@ export const updateLead = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
-    const { id, status, internal_notes } = data;
-    const patch = {
-      ...(status !== undefined ? { status } : {}),
-      ...(internal_notes !== undefined ? { internal_notes } : {}),
-    };
+    const { id, ...patch } = data;
     const { error } = await context.supabase.from("leads").update(patch).eq("id", id);
     fail(error);
     return { ok: true };
@@ -167,12 +163,7 @@ export const createOrder = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
-    const { customer_id, kind, scheduled_note, notes } = data;
-    const { error } = await context.supabase.from("service_orders").insert({
-      customer_id, kind,
-      ...(scheduled_note !== undefined ? { scheduled_note } : {}),
-      ...(notes !== undefined ? { notes } : {}),
-    });
+    const { error } = await context.supabase.from("service_orders").insert(data);
     fail(error);
     return { ok: true };
   });
@@ -212,11 +203,7 @@ export const createReminder = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
-    const { customer_id, service_order_id, title, due_date } = data;
-    const { error } = await context.supabase.from("reminders").insert({
-      customer_id, title, due_date,
-      ...(service_order_id !== undefined ? { service_order_id } : {}),
-    });
+    const { error } = await context.supabase.from("reminders").insert(data);
     fail(error);
     return { ok: true };
   });
