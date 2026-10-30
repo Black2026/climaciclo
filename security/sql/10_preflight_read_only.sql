@@ -1,4 +1,7 @@
 -- G4.5 | PREFLIGHT - SOMENTE LEITURA. Nao altera o banco.
+-- IMPORTANTE: execute cada SELECT separadamente e exporte um CSV por consulta.
+-- Se executar os quatro SELECTs de uma vez, o Lovable SQL Editor pode exportar
+-- somente a ultima tabela exibida; nesse caso faltarao ACL e grants de funcoes.
 -- Exportar resultados para arquivo privado e revisar antes de qualquer REVOKE.
 -- 1. Estado RLS, proprietario e ACL explicita.
 SELECT c.relname AS tabela,
