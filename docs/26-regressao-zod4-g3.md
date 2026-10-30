@@ -85,3 +85,20 @@ Participante apresentou captura da prévia visual do Lovable após autenticaçã
 **Próximos testes:** (1) F5 em `/admin` e verificar se o painel permanece autenticado; (2) clicar **Sair da conta** e confirmar retorno ao login; (3) tentar abrir `/admin` sem sessão e validar redirecionamento; (4) se possível, validar uma conta sem role `admin` (sem conceder privilégio). Não registrar segredos ou dados pessoais nas evidências.
 
 **Segurança operacional:** manter `ready_for_real_data=false` e o botão de envio de solicitação real desabilitado. A imagem foi apresentada na conversa, mas não há indicação de upload à pasta `evidencias/` do GitHub.
+
+
+## Homologação relatada — sessão, logout e proteção anônima (30/10/2026)
+
+O participante **confirmou expressamente a execução e aprovação de três testes manuais de interface** no Lovable, após autenticar o primeiro operador com role `admin`:
+
+| Caso | Teste | Resultado informado |
+|---|---|---|
+| G3-005 | Atualização F5 em `/admin` preserva sessão autenticada e mostra painel | Aprovado pelo participante |
+| G3-006 | Clique em **Sair da conta** realiza logout e retorna a `/admin/login` | Aprovado pelo participante |
+| G3-007 | Tentativa de acesso anônimo direto a `/admin` é bloqueada | Aprovado pelo participante |
+
+O primeiro login administrativo e os indicadores reais zerados já haviam sido evidenciados em captura. Estes três casos foram **relatados pelo participante**, não verificados por uma sessão de navegador controlada pelo assistente. Não há novas capturas anexadas ao GitHub para estes casos.
+
+**Gate G3 — estado:** fluxo do administrador autenticado, persistência de sessão, logout e bloqueio anônimo **homologados manualmente conforme relato**. Segue **pendente** o teste de usuário autenticado *sem* role `admin`, além de testes diretos de acesso negado pela API e verificação RLS por operação. Não declarar que esses últimos foram executados. Não ativar coleta real de leads por causa desta homologação.
+
+**Próximo Gate G4:** gestão de leads, clientes, atendimentos e lembretes, preservando o backend/admin já existente, RLS e o bloqueio `ready_for_real_data=false`. Implementar interfaces em PR isolado e realizar validação visual e persistência manual antes de mesclar.
