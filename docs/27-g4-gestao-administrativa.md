@@ -36,3 +36,17 @@
 3. Com dados sintéticos inseridos de modo controlado **apenas se necessário e autorizados**, verificar atualização de status, conversão idempotente e F5. Não gerar dados aleatórios/identificadores de clientes reais.
 4. Garantir que `ready_for_real_data` permanece `false`.
 5. Registrar capturas e resultados, sem informações privadas, antes de avançar a G4.2.
+
+
+## Homologação visual G4.1 — gestão de leads (30/10/2026)
+
+- O [PR #9](https://github.com/Black2026/climaciclo/pull/9) foi **mesclado** na `main` (`3832e35bbb9fcd6a65e2c8892ee04c485487867f`).
+- A [CI pós-merge](https://github.com/Black2026/climaciclo/actions/runs/41062728529) concluiu com sucesso.
+- O participante apresentou **duas capturas** da Visualização Lovable na rota `/admin/leads`, mostrando o título **Gestão de leads**, link **Voltar ao painel**, filtro **Filtrar status** e a tabela com as colunas Código, Nome, Cidade, Status e Ação.
+- A lista de opções do filtro foi visualmente observada: **Todos**, **novo**, **em contato**, **orçamento enviado**, **convertido**, **descartado**.
+- O estado vazio **Nenhum lead encontrado** é coerente com a ausência de registros no banco, e nenhum dado fictício é exibido.
+- **Aprovado:** acesso visual à página de gestão pelo operador, componentes renderizados e opções de filtro presentes.
+- **Não verificado:** efeito de aplicar filtros a registros existentes, persistência de mudança de status, conversão de lead em cliente, usuário autenticado sem role, tentativa anônima de abrir `/admin/leads`. Não tratar como homologação integral de G4.1.
+- Capturas fornecidas na conversa; pendente incluí-las manualmente na pasta `evidencias/` do GitHub.
+
+**Próximo passo:** desenvolver a interface G4.2 de clientes em branch separada; manter bloqueio `ready_for_real_data=false`. Não inserir dados pessoais reais nem inventar clientes para preencher a tabela.
