@@ -50,3 +50,14 @@
 - Capturas fornecidas na conversa; pendente incluí-las manualmente na pasta `evidencias/` do GitHub.
 
 **Próximo passo:** desenvolver a interface G4.2 de clientes em branch separada; manter bloqueio `ready_for_real_data=false`. Não inserir dados pessoais reais nem inventar clientes para preencher a tabela.
+
+
+## Implementação proposta G4.2 — 30/10/2026
+
+- Rota independente `/admin/clientes` criada em `src/routes/admin_.clientes.tsx`, seguindo o padrão que evita o erro anterior de aninhamento.
+- Busca local por nome/cidade/bairro, tabela de clientes existentes e estado vazio sem dados inventados.
+- Seleção de cliente exibe detalhes, código de origem, contagem de ordens e lembretes; edição de notas internas com limite de 4.000 caracteres.
+- Todas as consultas e alterações são realizadas por `listCustomers`, `getCustomer` e `updateCustomer`, server functions com `requireAdmin`.
+- Tela não apresenta telefone e não armazena credenciais no browser. Não modifica o banco, `ready_for_real_data` ou o bloqueio de captação.
+
+**Aceite pendente:** CI e segurança aprovados, revisão do PR, integração `main`, abertura de `/admin/clientes` no Lovable autenticado, verificação de lista vazia, pesquisa e detalhes (quando houver registros), persistência das notas após F5 e acesso negado sem permissão. Não cadastrar clientes fictícios automaticamente.
