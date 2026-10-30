@@ -181,3 +181,26 @@ O participante criou uma segunda conta de teste sem atribuir role `admin` e real
 **Próxima etapa:** inspeção somente leitura de configuração RLS e políticas de `public.admin_roles`, `public.leads`, `public.customers`, `public.service_orders`, `public.reminders`, `public.app_settings` e `public.lead_rate_limits`. Uma inspeção de metadados não substitui ensaio com credenciais de usuário comum, com verificação de rejeição das operações no servidor. Evitar executar `SET ROLE`, desligar RLS, modificar políticas ou testar mutações na base operacional.
 
 **Após os testes:** remover a segunda conta de teste, sem apagar a conta administradora, e registrar a revogação.
+
+
+### G4.5-03 — auditoria de ativação RLS (export CSV, 30/10/2026)
+
+O participante exportou o resultado da consulta de metadados do SQL Editor do Lovable Cloud como CSV (`query-results-export-2026-10-30_11-32-53.csv`; apresentado na conversa, **sem upload comprovado ao repositório**). O arquivo contém **7 linhas**, correspondentes a todas as tabelas auditadas:
+
+| Tabela | `rls_habilitado` | `rls_forcado` | `total_politicas` |
+|---|---|---|---:|
+| `admin_roles` | true | false | 1 |
+| `app_settings` | true | false | 2 |
+| `customers` | true | false | 4 |
+| `lead_rate_limits` | true | false | 0 |
+| `leads` | true | false | 4 |
+| `reminders` | true | false | 4 |
+| `service_orders` | true | false | 4 |
+
+**Resultado:** 7/7 tabelas com RLS habilitado e **19 políticas** no total. `rls_forcado=false` refere-se à aplicação de RLS ao proprietário da tabela, não à desativação da segurança para usuários comuns.
+
+**Exceção controlada a examinar:** `lead_rate_limits` não possui políticas explícitas. Na migração versionada (`drizzle/migrations/0000_migration.sql`), esta tabela é denominada *Rate limits (server only)*, habilita RLS, concede acesso a `service_role` e é modificada dentro da função `submit_lead` com `SECURITY DEFINER`; a função tem execução restrita a `service_role`. Isso é **compatível com intenção de acesso somente interno** e com negação padrão a `anon`/`authenticated`. Não criar política pública para corrigir artificialmente a contagem zero. O fato de `service_role` tipicamente contornar RLS exige proteger rigorosamente sua chave e os privilégios de execução. A migração indica a intenção; verificar correspondência com o banco efetivamente implantado.
+
+**Status G4.5-03:** **auditoria de ativação RLS aprovada**, mas a **homologação de políticas, privilégios e recusa de operações diretas ainda está pendente**. O CSV não informa `roles`, `cmd`, `qual`, `with_check`, privilégios `GRANT` ou resultados de tentativas de acesso sem role. A próxima evidência deve conter apenas uma consulta de leitura a `pg_policies` e, se necessário, `information_schema.role_table_grants`, sem mutações e sem contas reais.
+
+**Próximo teste:** verificar as expressões das 19 políticas e eventuais permissões excessivas; executar testes de negação de servidor com conta sem role em ambiente controlado. Manter `ready_for_real_data=false`, não habilitar captação real nem modificar RLS durante auditoria.
