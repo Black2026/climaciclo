@@ -237,3 +237,12 @@ Arquivo CSV exportado pelo participante (`query-results-export-2026-10-30_11-36-
 4. Registrar resultados e evidências antes de considerar G4.5-03 aprovado.
 
 **Nenhuma permissão foi alterada nesta etapa:** apenas análise CSV e documentação de risco.
+
+
+### G4.5-03 — privilégios efetivos confirmados por has_table_privilege (30/10/2026)
+
+CSV do participante `query-results-export-2026-10-30_11-43-27.csv` (arquivo anexado à conversa, não confirmado em `evidencias/`) contém **21 resultados**: os papéis `anon`, `authenticated` e `service_role` para as sete tabelas `admin_roles`, `app_settings`, `customers`, `lead_rate_limits`, `leads`, `reminders` e `service_orders`. Todas as combinações retornam `true` para `pode_ler (SELECT)`, `pode_truncar (TRUNCATE)`, `pode_referenciar (REFERENCES)` e `pode_criar_trigger (TRIGGER)`.
+
+**Achado confirmado:** privilégios SQL excessivos para `anon` e `authenticated` no banco consultado, inclusive `TRUNCATE` que não é protegido por RLS. Isso **não demonstra** a exposição do comando por endpoint HTTP ou incidente de acesso. Os grants atuais divergem da intenção de privilégios mínimos da migração versionada. Não homologar G4.5-03 ou habilitar `ready_for_real_data`.
+
+**Remediação recomendada, pendente de execução:** preparar migração transacional e reversível de REVOKE de `TRUNCATE`, `REFERENCES`, `TRIGGER` e demais permissões não necessárias a `anon`/`authenticated`, preservando funções e acessos operacionais mínimos. Avaliar grants herdados via `PUBLIC`, privilégios padrão de objetos novos e revogação em `lead_rate_limits`. Testar em ambiente isolado antes da aplicação no Lovable Cloud. Registrar o estado antes/depois, repetir `has_table_privilege`, revalidar login, navegação, admin e bloqueio de coleta real. **Nenhuma permissão foi alterada pelo assistente neste registro.**
